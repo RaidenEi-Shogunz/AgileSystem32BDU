@@ -1,0 +1,22 @@
+[
+    {
+        "key": "preorder_nu_gundam",
+        "path": "./images/banners/Nu_Gundam.jpg"
+    },
+    {
+        "key": "banner1",
+        "path": "./images/banners/banner1.jpg"
+    },
+    {
+        "key": "banner2",
+        "path": "./images/banners/banner2.jpg"
+    },
+    {
+        "key": "banner3",
+        "path": "./images/banners/banner3.jpg"
+    },
+    {
+        "key": "banner4",
+        "path": "./images/banners/banner4.jpg"
+    }
+]

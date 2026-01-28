@@ -1,0 +1,200 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* =========================
+       Helpers
+    ========================== */
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    // Role admin lấy từ accounts/{uid}.level
+    // Bạn có thể dùng: level = "admin" hoặc level = 10 tuỳ bạn. Ở đây hỗ trợ cả 2.
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/accounts/$(request.auth.uid))
+        && (
+          get(/databases/$(database)/documents/accounts/$(request.auth.uid)).data.level == "admin"
+          || get(/databases/$(database)/documents/accounts/$(request.auth.uid)).data.level >= 10
+        );
+    }
+
+    function isNumber(x) { return x is int || x is float; }
+
+    function nonEmptyString(x, maxLen) {
+      return (x is string) && x.size() > 0 && x.size() <= maxLen;
+    }
+
+    /* =========================
+       Default: deny all
+    ========================== */
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    /* =========================
+       Public catalogs (read-only for users)
+       - products
+       - banners
+       - news
+    ========================== */
+
+    match /products/{productId} {
+      // Ai cũng xem được sản phẩm
+      allow get, list: if true;
+
+      // Chỉ admin mới CRUD sản phẩm
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() && validProductUpdate();
+
+      function validProductCreate() {
+        return request.resource.data.keys().hasAll([
+          "name","price","category1","image","description"
+        ])
+        && nonEmptyString(request.resource.data.name, 120)
+        && isNumber(request.resource.data.price) && request.resource.data.price >= 0
+        && nonEmptyString(request.resource.data.category1, 60)
+        && nonEmptyString(request.resource.data.image, 500)
+        && nonEmptyString(request.resource.data.description, 5000)
+
+        // Optional fields if present
+        && (!("discount" in request.resource.data) || (isNumber(request.resource.data.discount) && request.resource.data.discount >= 0 && request.resource.data.discount <= 100))
+        && (!("sold" in request.resource.data) || (isNumber(request.resource.data.sold) && request.resource.data.sold >= 0))
+        && (!("brand" in request.resource.data) || nonEmptyString(request.resource.data.brand, 60))
+        && (!("grade" in request.resource.data) || nonEmptyString(request.resource.data.grade, 30))
+        && (!("releaseDate" in request.resource.data) || request.resource.data.releaseDate is timestamp);
+      }
+
+      // Update: admin được sửa, nhưng vẫn validate tối thiểu + tránh dữ liệu bậy
+      function validProductUpdate() {
+        // Nếu muốn “cứng” hơn nữa: ép only allow certain keys.
+        // Hiện tại: cho sửa nhưng bắt các field chính đúng type.
+        return (!("name" in request.resource.data) || nonEmptyString(request.resource.data.name, 120))
+          && (!("price" in request.resource.data) || (isNumber(request.resource.data.price) && request.resource.data.price >= 0))
+          && (!("discount" in request.resource.data) || (isNumber(request.resource.data.discount) && request.resource.data.discount >= 0 && request.resource.data.discount <= 100))
+          && (!("sold" in request.resource.data) || (isNumber(request.resource.data.sold) && request.resource.data.sold >= 0))
+          && (!("category1" in request.resource.data) || nonEmptyString(request.resource.data.category1, 60))
+          && (!("category2" in request.resource.data) || nonEmptyString(request.resource.data.category2, 60))
+          && (!("brand" in request.resource.data) || nonEmptyString(request.resource.data.brand, 60))
+          && (!("grade" in request.resource.data) || nonEmptyString(request.resource.data.grade, 30))
+          && (!("image" in request.resource.data) || nonEmptyString(request.resource.data.image, 500))
+          && (!("description" in request.resource.data) || nonEmptyString(request.resource.data.description, 5000))
+          && (!("releaseDate" in request.resource.data) || request.resource.data.releaseDate is timestamp);
+      }
+
+      // Reviews subcollection: products/{id}/reviews/{reviewId}
+      match /reviews/{reviewId} {
+        allow get, list: if true;
+
+        // User đã đăng nhập được tạo review (1 user / 1 review thì cần thêm logic ở client/server)
+        allow create: if signedIn() && validReviewCreate();
+
+        // Chỉ chủ review hoặc admin mới sửa/xoá
+        allow update, delete: if (signedIn() && resource.data.uid == request.auth.uid) || isAdmin();
+
+        function validReviewCreate() {
+          return request.resource.data.keys().hasAll(["uid","rating","content","createdAt"])
+            && request.resource.data.uid == request.auth.uid
+            && isNumber(request.resource.data.rating)
+            && request.resource.data.rating >= 1 && request.resource.data.rating <= 5
+            && nonEmptyString(request.resource.data.content, 2000)
+            && request.resource.data.createdAt is timestamp;
+        }
+      }
+    }
+
+    match /banners/{bannerId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /news/{newsId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    /* =========================
+       Accounts + Cart + OrderHistory
+       accounts/{uid}
+       accounts/{uid}/cart/{itemId}
+       accounts/{uid}/orderHistory/{orderId}
+    ========================== */
+
+    match /accounts/{userId} {
+      // User chỉ xem/sửa profile của chính mình
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+
+      // Tạo account doc: chỉ chính user (sau khi Auth) hoặc admin
+      allow create: if isOwner(userId) || isAdmin();
+
+      // Update: cấm user tự nâng quyền / sửa level
+      allow update: if (isOwner(userId) && !("level" in request.resource.data))
+                    || isAdmin();
+
+      // Delete account: admin
+      allow delete: if isAdmin();
+
+      // Cart
+      match /cart/{itemId} {
+        allow get, list: if isOwner(userId) || isAdmin();
+
+        // User được add/update/remove item của chính mình
+        allow create, update, delete: if isOwner(userId) && validCartItem();
+
+        function validCartItem() {
+          // Tuỳ dữ liệu cart của bạn; đây là bộ tối thiểu an toàn
+          return request.resource.data.keys().hasAll(["productId","qty","priceSnapshot","nameSnapshot","imageSnapshot"])
+            && nonEmptyString(request.resource.data.productId, 200)
+            && isNumber(request.resource.data.qty) && request.resource.data.qty >= 1 && request.resource.data.qty <= 99
+            && isNumber(request.resource.data.priceSnapshot) && request.resource.data.priceSnapshot >= 0
+            && nonEmptyString(request.resource.data.nameSnapshot, 120)
+            && nonEmptyString(request.resource.data.imageSnapshot, 500);
+        }
+      }
+
+      // Orders history
+      match /orderHistory/{orderId} {
+        allow get, list: if isOwner(userId) || isAdmin();
+
+        // User tạo order history của chính mình (đặt hàng)
+        allow create: if isOwner(userId) && validOrderCreate();
+
+        // User KHÔNG được sửa/xoá order đã tạo (tránh gian lận). Admin được.
+        allow update, delete: if isAdmin();
+
+        function validOrderCreate() {
+          // Hỗ trợ cả 2 kiểu dữ liệu:
+          // - Kiểu cũ: total (number)
+          // - Kiểu mới: totals.grandTotal (number) + nhiều field mở rộng (orderCode, shipping, payment...)
+          return request.resource.data.keys().hasAll(["items","createdAt","status"])
+            && request.resource.data.items is list
+            && request.resource.data.items.size() > 0
+            && request.resource.data.createdAt is timestamp
+            && (
+              (("totals" in request.resource.data)
+                && request.resource.data.totals is map
+                && isNumber(request.resource.data.totals.grandTotal)
+                && request.resource.data.totals.grandTotal >= 0)
+              || (("total" in request.resource.data)
+                && isNumber(request.resource.data.total)
+                && request.resource.data.total >= 0)
+            )
+            // status: flow giống TMĐT
+            // awaiting_payment -> pending -> confirmed -> shipping -> delivered (hoặc cancelled/return)
+            && (request.resource.data.status in [
+              "awaiting_payment","payment_failed",
+              "pending","confirmed","cancel_requested",
+              "shipping","delivered","cancelled","return",
+              "paid","done","cancel"
+            ]);
+        }
+      }
+    }
+  }
+}

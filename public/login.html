@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Đăng nhập | Gundam Store</title>
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    body{background:#f6f7fb;font-family:Arial,sans-serif;margin:0}
+    .page{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      padding:18px;
+      background: radial-gradient(1000px 600px at 10% 10%, rgba(244,196,48,.20), transparent 60%),
+                  radial-gradient(900px 520px at 90% 30%, rgba(37,99,235,.14), transparent 60%),
+                  linear-gradient(to bottom right, #fff9e6, #ffffff);
+    }
+    .card{
+      width:min(420px, 96vw);
+      background:#fff;border:1px solid #eee;border-radius:18px;
+      box-shadow:0 18px 60px rgba(0,0,0,.12);
+      padding:18px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;justify-content:center;
+      margin:4px 0 12px;
+      font-weight:1000;
+    }
+    .brand .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg, #f4c430, #d4af37);
+      display:flex;align-items:center;justify-content:center;color:#fff;
+      box-shadow:0 16px 34px rgba(244,196,48,.28);
+    }
+    h1{margin:0;text-align:center;font-size:20px}
+    .sub{margin:6px 0 14px;text-align:center;color:#6b7280;font-size:13px;line-height:1.4}
+
+    .field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+    .label{font-weight:900;color:#374151;font-size:13px;display:flex;align-items:center;gap:8px}
+    .input{
+      width:100%;padding:12px 12px;border-radius:12px;border:1px solid #e5e7eb;
+      font-size:14px;outline:none;background:#fff;
+    }
+    .input:focus{border-color:#f4c430;box-shadow:0 0 0 4px rgba(244,196,48,.20)}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px}
+    .link{color:#2563eb;text-decoration:none;font-weight:900;font-size:13px}
+    .link:hover{text-decoration:underline}
+
+    .btn{
+      width:100%;margin-top:12px;
+      border:none;border-radius:12px;padding:12px 14px;cursor:pointer;
+      font-weight:1000;font-size:15px;color:#fff;
+      background:linear-gradient(135deg, #f4c430, #d4af37);
+      box-shadow:0 18px 42px rgba(244,196,48,.25);
+      display:flex;align-items:center;justify-content:center;gap:10px;
+    }
+    .btn:hover{filter:brightness(.98)}
+    .btn:disabled{opacity:.65;cursor:not-allowed}
+
+    .error{
+      margin-top:10px;text-align:center;color:#ef4444;font-weight:900;font-size:13px;min-height:18px
+    }
+
+    .toast{
+      position:fixed;right:14px;bottom:14px;z-index:9999;
+      background:#111827;color:#fff;border-radius:14px;padding:12px 14px;
+      box-shadow:0 18px 60px rgba(0,0,0,.25);
+      max-width:360px;display:none
+    }
+    .toast.show{display:block}
+    .toast .t{font-weight:1000;margin:0 0 4px}
+    .toast .d{margin:0;color:#d1d5db;font-size:13px;line-height:1.35}
+
+    .spinner{
+      width:18px;height:18px;border-radius:999px;border:3px solid rgba(255,255,255,.35);
+      border-top-color:#fff;animation:spin .8s linear infinite
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <section class="card" aria-label="Đăng nhập">
+      <div class="brand">
+        <div class="logo"><i class="fa-solid fa-robot"></i></div>
+        <div>Gundam Store</div>
+      </div>
+
+      <h1>Đăng nhập</h1>
+      <p class="sub">Dùng <b>username</b> hoặc <b>email</b> để đăng nhập.</p>
+
+      <form id="login-form" autocomplete="on">
+        <div class="field">
+          <div class="label"><i class="fa-regular fa-user"></i> Tên đăng nhập / Email</div>
+          <input class="input" type="text" id="identity" placeholder="vd: kennas / abc@gmail.com" required />
+        </div>
+
+        <div class="field">
+          <div class="label"><i class="fa-solid fa-lock"></i> Mật khẩu</div>
+          <input class="input" type="password" id="password" placeholder="••••••••" required />
+        </div>
+
+        <div class="row">
+          <a class="link" href="/register.html">Tạo tài khoản</a>
+        </div>
+
+        <button class="btn" type="submit" id="btnLogin">
+          <span class="spinner" id="spin" style="display:none;"></span>
+          <span id="btnText">Đăng nhập</span>
+        </button>
+
+        <div class="error" id="error-message"></div>
+      </form>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">
+    <p class="t" id="toastTitle">Thông báo</p>
+    <p class="d" id="toastDesc"></p>
+  </div>
+
+  <!-- Firebase compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js" defer></script>
+  <script src="/js/firebase-init.js" defer></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const errorMsg = document.getElementById("error-message");
+      const form = document.getElementById("login-form");
+      const identityEl = document.getElementById("identity");
+      const passEl = document.getElementById("password");
+
+      const btn = document.getElementById("btnLogin");
+      const spin = document.getElementById("spin");
+      const btnText = document.getElementById("btnText");
+
+      const toast = document.getElementById("toast");
+      const toastTitle = document.getElementById("toastTitle");
+      const toastDesc = document.getElementById("toastDesc");
+
+      function showToast(title, desc) {
+        toastTitle.textContent = title || "Thông báo";
+        toastDesc.textContent = desc || "";
+        toast.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => toast.classList.remove("show"), 2400);
+      }
+
+      function setLoading(v) {
+        btn.disabled = v;
+        spin.style.display = v ? "inline-block" : "none";
+        btnText.textContent = v ? "Đang đăng nhập..." : "Đăng nhập";
+      }
+
+      function mapAuthError(code) {
+        const m = {
+          "auth/invalid-email": "Email không hợp lệ.",
+          "auth/user-disabled": "Tài khoản đã bị vô hiệu hóa.",
+          "auth/user-not-found": "Không tìm thấy tài khoản.",
+          "auth/wrong-password": "Sai mật khẩu.",
+          "auth/invalid-credential": "Thông tin đăng nhập không đúng.",
+          "auth/network-request-failed": "Lỗi mạng. Kiểm tra Internet và thử lại.",
+          "auth/configuration-not-found":
+            "Firebase Auth chưa cấu hình. Bật Email/Password trong Firebase Console và add domain localhost."
+        };
+        return m[code] || ("Có lỗi xảy ra. Mã lỗi: " + (code || "unknown"));
+      }
+
+      // Nếu đã login rồi thì về trang chủ
+      const existed = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+      if (existed && existed.userId) {
+        window.location.href = "/index.html";
+        return;
+      }
+
+      // Đợi firebase-init xong
+      function getFirebase() {
+        if (!window.firebase || !firebase.apps || !firebase.apps.length) return null;
+        return {
+          auth: firebase.auth(),
+          db: firebase.firestore(),
+        };
+      }
+
+      async function resolveEmailFromIdentity(db, identity) {
+        const id = identity.trim();
+        const isEmail = id.includes("@");
+        if (isEmail) return id.toLowerCase();
+
+        // nhập username -> tìm email trong accounts
+        const snap = await db.collection("accounts").where("username", "==", id).limit(1).get();
+        if (snap.empty) return null;
+
+        const doc = snap.docs[0];
+        const data = doc.data() || {};
+        return (data.email || "").toLowerCase() || null;
+      }
+
+      async function getAccountProfileByEmail(db, email) {
+        const snap = await db.collection("accounts").where("email", "==", email).limit(1).get();
+        if (snap.empty) return null;
+        const doc = snap.docs[0];
+        return { docId: doc.id, ...doc.data() };
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorMsg.textContent = "";
+
+        const identity = identityEl.value.trim();
+        const password = passEl.value;
+
+        if (!identity || !password) {
+          errorMsg.textContent = "Vui lòng nhập đầy đủ thông tin.";
+          return;
+        }
+
+        const fb = getFirebase();
+        if (!fb) {
+          errorMsg.textContent = "Firebase chưa khởi tạo. Kiểm tra /js/firebase-init.js";
+          return;
+        }
+
+        try {
+          setLoading(true);
+
+          const email = await resolveEmailFromIdentity(fb.db, identity);
+          if (!email) {
+            errorMsg.textContent = "Không tìm thấy tài khoản với username/email này.";
+            return;
+          }
+
+          // ✅ Đăng nhập bằng Firebase Auth
+          const cred = await fb.auth.signInWithEmailAndPassword(email, password);
+          const uid = cred.user.uid;
+
+          // Lấy profile từ accounts để lấy username/level (nếu có)
+          const profile = await getAccountProfileByEmail(fb.db, email);
+
+          const loggedInUser = {
+            userId: uid, // dùng uid làm id chuẩn
+            username: (profile && profile.username) ? profile.username : (email.split("@")[0] || ""),
+            email: email,
+            level: (profile && profile.level != null) ? profile.level : 0
+          };
+
+          localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+          localStorage.setItem("loginStatus", "logged_in");
+
+          showToast("Đăng nhập thành công", `Xin chào, ${loggedInUser.username || "bạn"}!`);
+          setTimeout(() => window.location.href = "/index.html", 800);
+
+        } catch (err) {
+          console.error("Login error:", err);
+          errorMsg.textContent = mapAuthError(err.code);
+        } finally {
+          setLoading(false);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

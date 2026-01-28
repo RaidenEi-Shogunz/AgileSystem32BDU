@@ -1,0 +1,458 @@
+[
+  {
+    "id": 1,
+    "image": "./images/products/rg_gundam_astray_red_frame_kai.png",
+    "images": [
+      "./images/products/rg_gundam_astray_red_frame_kai (1).jpg",
+      "./images/products/rg_gundam_astray_red_frame_kai (2).jpg",
+      "./images/products/rg_gundam_astray_red_frame_kai (3).jpg"
+    ],
+    "name": "RG Gundam Astray Red Frame Kai",
+    "grade": "RG",
+    "category1": "Gundam",
+    "sold": 198,
+    "price": 860000,
+    "discount": 8,
+    "releaseDate": "2022-03-15",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Phiên bản RG của Astray Red Frame Kai với katana kép, chi tiết cao và khả năng tạo dáng vượt trội."
+  },
+  {
+    "id": 2,
+    "image": "./images/products/mgex_strike_freedom_gundam.png",
+    "name": "MG Strike Freedom Gundam",
+    "grade": "MG",
+    "category1": "Gundam",
+    "sold": 78,
+    "price": 1250000,
+    "discount": 0,
+    "releaseDate": "2021-10-05",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Phiên bản MGEX nổi bật với khung ánh kim và hệ thống khớp linh hoạt, mang lại độ chân thực ấn tượng.",
+    "images": [
+      "./images/products/mgex_strike_freedom_gundam (1).jpg",
+      "./images/products/mgex_strike_freedom_gundam (2).jpg",
+      "./images/products/mgex_strike_freedom_gundam (3).jpg"
+    ]
+  },
+  {
+    "id": 3,
+    "image": "./images/products/mg_unicorn_gundam_perfectibility.png",
+    "name": "MG Unicorn Gundam Perfectibility",
+    "grade": "MG",
+    "category1": "Gundam",
+    "sold": 89,
+    "price": 1650000,
+    "discount": 15,
+    "releaseDate": "2020-12-20",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Bản hoàn chỉnh mạnh mẽ nhất của Unicorn với đầy đủ vũ khí, màu xanh đặc trưng và chi tiết sắc nét.",
+    "images": [
+      "./images/products/mg_unicorn_gundam_perfectibility (1).jpg",
+      "./images/products/mg_unicorn_gundam_perfectibility (2).jpg",
+      "./images/products/mg_unicorn_gundam_perfectibility (3).jpg"
+    ]
+  },
+  {
+    "id": 4,
+    "image": "./images/products/rg_gundam_exia_repair_iii.png",
+    "name": "RG Gundam Exia Repair III",
+    "grade": "RG",
+    "category1": "Gundam",
+    "sold": 162,
+    "price": 790000,
+    "discount": 10,
+    "releaseDate": "2022-06-18",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Phiên bản RG chi tiết của Exia Repair III với vũ khí nâng cấp và màu sắc mạnh mẽ.",
+    "images": [
+      "./images/products/rg_gundam_exia_repair_iii (1).jpg",
+      "./images/products/rg_gundam_exia_repair_iii (2).jpg",
+      "./images/products/rg_gundam_exia_repair_iii (3).jpg"
+    ]
+  },
+  {
+    "id": 5,
+    "image": "./images/products/hg_gundam_barbatos_lupus.png",
+    "name": "HG Gundam Barbatos Lupus",
+    "grade": "HG",
+    "category1": "Gundam",
+    "sold": 210,
+    "price": 450000,
+    "discount": 0,
+    "releaseDate": "2019-08-25",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Gundam mạnh mẽ từ IBO với thiết kế cơ bắp, vũ khí cận chiến và tư thế chiến đấu hầm hố.",
+    "images": [
+      "./images/products/hg_gundam_barbatos_lupus (1).jpg",
+      "./images/products/hg_gundam_barbatos_lupus (2).jpg",
+      "./images/products/hg_gundam_barbatos_lupus (3).jpg"
+    ]
+  },
+  {
+    "id": 6,
+    "image": "./images/products/hg_gundam_aerial_rebuild.png",
+    "name": "HG Gundam Aerial Rebuild",
+    "grade": "HG",
+    "category1": "Gundam",
+    "sold": 312,
+    "price": 520000,
+    "discount": 5,
+    "releaseDate": "2023-01-12",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Phiên bản nâng cấp từ Gundam Aerial trong The Witch from Mercury, với giáp mới và khả năng chiến đấu linh hoạt.",
+    "images": [
+      "./images/products/hg_gundam_aerial_rebuild (1).jpg",
+      "./images/products/hg_gundam_aerial_rebuild (2).jpg",
+      "./images/products/hg_gundam_aerial_rebuild (3).jpg"
+    ]
+  },
+  {
+    "id": 7,
+    "image": "./images/products/rg_rx_78_2_gundam_ver_2_0.png",
+    "name": "RG RX-78-2 Gundam ver 2.0",
+    "grade": "RG",
+    "category1": "Gundam",
+    "sold": 125,
+    "price": 950000,
+    "discount": 0,
+    "releaseDate": "2021-04-03",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Biểu tượng huyền thoại RX-78-2 trong phiên bản RG mới với độ chi tiết cao và khả năng tạo dáng chuẩn xác.",
+    "images": [
+      "./images/products/rg_rx_78_2_gundam_ver_2_0 (1).jpg",
+      "./images/products/rg_rx_78_2_gundam_ver_2_0 (2).jpg",
+      "./images/products/rg_rx_78_2_gundam_ver_2_0 (3).jpg"
+    ]
+  },
+  {
+    "id": 8,
+    "image": "./images/products/rg_wing_gundam_zero_ew.png",
+    "name": "RG Wing Gundam Zero EW",
+    "grade": "RG",
+    "category1": "Gundam",
+    "sold": 348,
+    "price": 880000,
+    "discount": 0,
+    "releaseDate": "2022-11-22",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Gundam nổi bật với đôi cánh thiên thần từ Endless Waltz, cơ chế biến hình và độ chi tiết xuất sắc.",
+    "images": [
+      "./images/products/rg_wing_gundam_zero_ew (1).jpg",
+      "./images/products/rg_wing_gundam_zero_ew (2).jpg",
+      "./images/products/rg_wing_gundam_zero_ew (3).jpg"
+    ]
+  },
+  {
+    "id": 9,
+    "image": "./images/products/mg_sinanju_stein_narrative_ver.png",
+    "name": "MG Sinanju Stein (Narrative Ver.)",
+    "grade": "MG",
+    "category1": "Gundam",
+    "sold": 145,
+    "price": 1320000,
+    "discount": 12,
+    "releaseDate": "2020-09-30",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Phiên bản MG ấn tượng của Sinanju Stein với thiết kế mạnh mẽ, màu xám lạnh và kho vũ khí phong phú.",
+    "images": [
+      "./images/products/mg_sinanju_stein_narrative_ver (1).jpg",
+      "./images/products/mg_sinanju_stein_narrative_ver (2).jpg",
+      "./images/products/mg_sinanju_stein_narrative_ver (3).jpg"
+    ]
+  },
+  {
+    "id": 10,
+    "image": "./images/products/hg_00_gundam.png",
+    "name": "HG 00 Gundam",
+    "grade": "HG",
+    "category1": "Gundam",
+    "sold": 274,
+    "price": 380000,
+    "discount": 0,
+    "releaseDate": "2018-07-11",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Gundam biểu tượng từ 00 với hệ thống GN Drive kép và khả năng kết hợp với nhiều bộ giáp.",
+    "images": [
+      "./images/products/hg_00_gundam (1).jpg",
+      "./images/products/hg_00_gundam (2).jpg",
+      "./images/products/hg_00_gundam (3).jpg"
+    ]
+  },
+  {
+    "id": 11,
+    "image": "./images/products/frame_arms_baselard.png",
+    "name": "Frame Arms Baselard",
+    "grade": "None",
+    "category1": "Kotobukiya",
+    "sold": 76,
+    "price": 880000,
+    "discount": 0,
+    "releaseDate": "2020-01-01",
+    "category2": "Model Kit",
+    "brand": "Kotobukiya",
+    "description": "Mẫu mô hình robot dạng cơ bản với thiết kế có thể tùy chỉnh, thuộc dòng Frame Arms nổi tiếng của Kotobukiya.",
+    "images": [
+      "./images/products/frame_arms_baselard (1).jpg",
+      "./images/products/frame_arms_baselard (2).jpg",
+      "./images/products/frame_arms_baselard (3).jpg"
+    ]
+  },
+  {
+    "id": 12,
+    "image": "./images/products/hexa_gear_bulkarm_alpha.png",
+    "name": "Hexa Gear Bulkarm Alpha",
+    "grade": "None",
+    "category1": "Kotobukiya",
+    "sold": 55,
+    "price": 1100000,
+    "discount": 0,
+    "releaseDate": "2021-06-15",
+    "category2": "Model Kit",
+    "brand": "Kotobukiya",
+    "description": "Mô hình cơ giới hóa kiểu quân sự với buồng lái mở được, mang đậm phong cách chiến đấu thực dụng.",
+    "images": [
+      "./images/products/hexa_gear_bulkarm_alpha (1).jpg",
+      "./images/products/hexa_gear_bulkarm_alpha (2).jpg",
+      "./images/products/hexa_gear_bulkarm_alpha (3).jpg"
+    ]
+  },
+  {
+    "id": 13,
+    "image": "./images/products/eexm_17_alto_white.png",
+    "name": "eEXM-17 Alto (White)",
+    "grade": "None",
+    "category1": "30ML",
+    "sold": 212,
+    "price": 320000,
+    "discount": 0,
+    "releaseDate": "2022-02-17",
+    "category2": "Model Kit",
+    "brand": "Bandai",
+    "description": "Thiết kế mô hình đơn giản nhưng linh hoạt thuộc dòng 30MM, dễ lắp và kết hợp phụ kiện tùy ý.",
+    "images": [
+      "./images/products/eexm_17_alto_white (1).jpg",
+      "./images/products/eexm_17_alto_white (2).jpg",
+      "./images/products/eexm_17_alto_white (3).jpg"
+    ]
+  },
+  {
+    "id": 14,
+    "image": "./images/products/spinatio_army_type.png",
+    "name": "Spinatio (Army Type)",
+    "grade": "None",
+    "category1": "30ML",
+    "sold": 188,
+    "price": 360000,
+    "discount": 5,
+    "releaseDate": "2022-10-02",
+    "category2": "Model Kit",
+    "brand": "Bandai",
+    "description": "Spinatio biến thể quân đội với tông màu đất và thiết kế nhỏ gọn, dễ kết hợp vũ khí và áo giáp.",
+    "images": [
+      "./images/products/spinatio_army_type (1).jpg",
+      "./images/products/spinatio_army_type (2).jpg",
+      "./images/products/spinatio_army_type (3).jpg"
+    ]
+  },
+  {
+    "id": 15,
+    "image": "./images/products/agnes_tachyon_nendoroid.png",
+    "name": "Agnes Tachyon - Nendoroid",
+    "grade": "None",
+    "category1": "Nendoroid",
+    "sold": 67,
+    "price": 650000,
+    "discount": 0,
+    "releaseDate": "2023-09-20",
+    "category2": "Figure",
+    "brand": "Good Smile Company",
+    "description": "Nendoroid đáng yêu của Agnes Tachyon với nhiều biểu cảm và phụ kiện đặc trưng từ series Uma Musume.",
+    "images": [
+      "./images/products/agnes_tachyon_nendoroid (1).jpg",
+      "./images/products/agnes_tachyon_nendoroid (2).jpg",
+      "./images/products/agnes_tachyon_nendoroid (3).jpg"
+    ]
+  },
+  {
+    "id": 16,
+    "image": "./images/products/aobing_plastic_model.png",
+    "name": "Aobing Plastic Model",
+    "grade": "None",
+    "category1": "Mecha",
+    "sold": 49,
+    "price": 720000,
+    "discount": 0,
+    "releaseDate": "2022-04-10",
+    "category2": "Model Kit",
+    "brand": "Unknown",
+    "description": "Mô hình mecha kiểu Trung Hoa hiện đại với thiết kế độc đáo và đường nét chi tiết sắc sảo.",
+    "images": [
+      "./images/products/aobing_plastic_model (1).jpg",
+      "./images/products/aobing_plastic_model (2).jpg",
+      "./images/products/aobing_plastic_model (3).jpg"
+    ]
+  },
+  {
+    "id": 17,
+    "image": "./images/products/godhand_ultimate_nipper.png",
+    "name": "GodHand Ultimate Nipper",
+    "grade": "None",
+    "category1": "Tool",
+    "sold": 391,
+    "price": 980000,
+    "discount": 0,
+    "releaseDate": "2019-12-05",
+    "category2": "Accessory",
+    "brand": "GodHand",
+    "description": "Kìm cắt huyền thoại của giới Gunpla với độ bén và chính xác cực cao, lý tưởng cho chi tiết nhỏ.",
+    "images": [
+      "./images/products/godhand_ultimate_nipper (1).jpg",
+      "./images/products/godhand_ultimate_nipper (2).jpg",
+      "./images/products/godhand_ultimate_nipper (3).jpg"
+    ]
+  },
+  {
+    "id": 18,
+    "image": "./images/products/satono_diamond_figure.png",
+    "name": "Satono Diamond - Figure",
+    "grade": "None",
+    "category1": "Figure",
+    "sold": 88,
+    "price": 820000,
+    "discount": 0,
+    "releaseDate": "2021-03-28",
+    "category2": "Figure",
+    "brand": "Good Smile Company",
+    "description": "Tượng PVC chất lượng cao của nhân vật Satono Diamond với tạo hình đáng yêu từ Uma Musume.",
+    "images": [
+      "./images/products/satono_diamond_figure (1).jpg",
+      "./images/products/satono_diamond_figure (2).jpg",
+      "./images/products/satono_diamond_figure (3).jpg"
+    ]
+  },
+  {
+    "id": 19,
+    "image": "./images/products/sd_gundam_ex_standard_rx_78_2.png",
+    "name": "SD Gundam EX-Standard RX-78-2",
+    "grade": "SD",
+    "category1": "Gundam",
+    "sold": 132,
+    "price": 180000,
+    "discount": 0,
+    "releaseDate": "2018-09-19",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Phiên bản SD nhỏ gọn của RX-78-2 với tỷ lệ chibi, dễ lắp ráp và phù hợp cho người mới bắt đầu.",
+    "images": [
+      "./images/products/sd_gundam_ex_standard_rx_78_2 (1).jpg",
+      "./images/products/sd_gundam_ex_standard_rx_78_2 (2).jpg",
+      "./images/products/sd_gundam_ex_standard_rx_78_2 (3).jpg"
+    ]
+  },
+  {
+    "id": 20,
+    "image": "./images/products/sd_sangoku_soketsuden_cao_cao_wing_gundam.png",
+    "name": "SD Sangoku Soketsuden Cao Cao Wing Gundam",
+    "grade": "SD",
+    "category1": "Gundam",
+    "sold": 97,
+    "price": 220000,
+    "discount": 5,
+    "releaseDate": "2019-05-10",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Thiết kế kết hợp giữa nhân vật lịch sử và Gundam Wing, mang phong cách Tam Quốc độc đáo.",
+    "images": [
+      "./images/products/sd_sangoku_soketsuden_cao_cao_wing_gundam (1).jpg",
+      "./images/products/sd_sangoku_soketsuden_cao_cao_wing_gundam (2).jpg",
+      "./images/products/sd_sangoku_soketsuden_cao_cao_wing_gundam (3).jpg"
+    ]
+  },
+  {
+    "id": 21,
+    "image": "./images/products/pgu_rx_78_2_gundam.png",
+    "name": "PG RX-78-2 Gundam",
+    "grade": "PG",
+    "category1": "Gundam",
+    "sold": 65,
+    "price": 4000000,
+    "discount": 0,
+    "releaseDate": "2021-12-12",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Mô hình kích thước lớn, độ chi tiết cực cao và khung kim loại bền chắc từ dòng Perfect Grade.",
+    "images": [
+      "./images/products/pgu_rx_78_2_gundam (1).jpg",
+      "./images/products/pgu_rx_78_2_gundam (2).jpg",
+      "./images/products/pgu_rx_78_2_gundam (3).jpg"
+    ]
+  },
+  {
+    "id": 22,
+    "image": "./images/products/pg_unicorn_gundam.png",
+    "name": "PG Unicorn Gundam",
+    "grade": "PG",
+    "category1": "Gundam",
+    "sold": 58,
+    "price": 5500000,
+    "discount": 10,
+    "releaseDate": "2020-07-07",
+    "category2": "Gunpla",
+    "brand": "Bandai",
+    "description": "Bản Unicorn chuyển đổi dạng Destroy cực ấn tượng với LED và cơ chế biến hình phức tạp.",
+    "images": [
+      "./images/products/pg_unicorn_gundam (1).jpg",
+      "./images/products/pg_unicorn_gundam (2).jpg",
+      "./images/products/pg_unicorn_gundam (3).jpg"
+    ]
+  },
+  {
+    "id": 23,
+    "image": "./images/products/figure_kitasan_black.png",
+    "name": "Figure Kitasan Black",
+    "grade": "None",
+    "category1": "Figure",
+    "sold": 102,
+    "price": 790000,
+    "discount": 0,
+    "releaseDate": "2023-02-14",
+    "category2": "Figure",
+    "brand": "Good Smile Company",
+    "description": "Tượng Kitasan Black đáng yêu với tạo hình sinh động và chất lượng hoàn thiện cao.",
+    "images": [
+      "./images/products/figure_kitasan_black (1).jpg",
+      "./images/products/figure_kitasan_black (2).jpg",
+      "./images/products/figure_kitasan_black (3).jpg"
+    ]
+  },
+  {
+    "id": 24,
+    "image": "./images/products/makitanetannhauser_nendoroid.png",
+    "name": "Makitanetannhauser - Nendoroid",
+    "grade": "None",
+    "category1": "Nendoroid",
+    "sold": 84,
+    "price": 690000,
+    "discount": 0,
+    "releaseDate": "2023-08-09",
+    "category2": "Figure",
+    "brand": "Good Smile Company",
+    "description": "Nendoroid dễ thương với nhiều phụ kiện kèm theo, thiết kế chibi độc đáo và chất lượng cao.",
+    "images": [
+      "./images/products/makitanetannhauser_nendoroid (1).jpg",
+      "./images/products/makitanetannhauser_nendoroid (2).jpg",
+      "./images/products/makitanetannhauser_nendoroid (3).jpg"
+    ]
+  }
+]
