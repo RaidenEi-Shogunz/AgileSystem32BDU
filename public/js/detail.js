@@ -57,7 +57,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     md.content = desc;
 
-    let c = document.querySelector('link[rel="canonical"]');
+    let c = document.querySelectordocument.querySelector("#add-to-cart").onclick = () => {
+  addToCart(product);
+};
     if (!c) {
       c = document.createElement("link");
       c.rel = "canonical";
