@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chi tiết sản phẩm | Gundam Store</title>
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/detail.css" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-p1CmTjpI9jvda+MIkn6L4Hjh6lVxJKzee+omQ9MT+Fk8u9qZkWZrGux7DwSpsFJ5U9zJe+UdYkDc7jN4kI2dIw=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+
+  <!-- Page-specific styles (could move to detail.css if preferred) -->
+  <style>
+    :root {
+      --clr-bg: #f6f7fb;
+      --clr-white: #fff;
+      --clr-border: #eee;
+      --clr-text-main: #111827;
+      --clr-text-muted: #6b7280;
+      --clr-accent: #16a34a;
+      --clr-warning: #f59e0b;
+      --clr-error: #ef4444;
+      --shadow-light: 0 10px 26px rgba(0,0,0,.06);
+      --shadow-strong: 0 24px 80px rgba(0,0,0,.35);
+      --radius-lg: 18px;
+      --radius-full: 999px;
+      --gap-sm: 8px;
+      --gap-md: 12px;
+      --gap-lg: 14px;
+      --font-bold: 900;
+      --font-black: 1000;
+    }
+    body { background: var(--clr-bg); margin: 0; font-family: system-ui, sans-serif; }
+    .page { max-width: 1200px; margin: 0 auto; padding: var(--gap-lg); }
+
+    /* ----------------------------------------
+       Top actions (breadcrumbs and back button)
+       ---------------------------------------- */
+    .top-actions {
+      display: flex;
+      gap: var(--gap-md);
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin: 6px 0 var(--gap-lg);
+    }
+    .btn {
+      border: none;
+      border-radius: var(--radius-full);
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: var(--font-black);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+    .btn-ghost {
+      background: var(--clr-white);
+      border: 1px solid #e5e7eb;
+      color: var(--clr-text-main);
+    }
+    .crumb {
+      color: var(--clr-text-muted);
+      font-size: 13px;
+    }
+
+    /* ----------------------------------------
+       Product section
+       ---------------------------------------- */
+    .wrap {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: var(--gap-lg);
+      align-items: start;
+    }
+    @media (max-width: 920px) { .wrap { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--clr-white);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-light);
+      overflow: hidden;
+    }
+    .pad { padding: var(--gap-lg); }
+
+    /* Gallery */
+    .gallery { position: relative; }
+
+    /* Slider gallery */
+    .gallery-slider { position: relative; width: 100%; height: 460px; overflow: hidden; }
+    @media (max-width: 920px) { .gallery-slider { height: 360px; } }
+
+    .gallery-slider img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      cursor: zoom-in;
+    }
+    .gallery-slider img.active{ display: block; }
+
+    .g-nav{
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 42px; height: 42px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      background: rgba(255,255,255,.75);
+      box-shadow: 0 12px 30px rgba(0,0,0,.18);
+      font-weight: 1000;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 3;
+    }
+    .g-nav:hover{ background: rgba(255,255,255,.9); }
+    .g-prev{ left: 12px; }
+    .g-next{ right: 12px; }
+
+    .g-dots{
+      position: absolute;
+      left: 0; right: 0;
+      bottom: 12px;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      z-index: 3;
+    }
+    .g-dot{
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.9);
+      background: rgba(0,0,0,.25);
+      cursor: pointer;
+    }
+    .g-dot.active{ background: rgba(255,255,255,.95); }
+.badge-sale {
+      position: absolute;
+      top: var(--gap-lg);
+      left: var(--gap-lg);
+      background: var(--clr-error);
+      color: var(--clr-white);
+      font-weight: var(--font-black);
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: var(--radius-full);
+      box-shadow: 0 18px 36px rgba(239,68,68,.25);
+    }
+    .badge-chip {
+      position: absolute;
+      top: var(--gap-lg);
+      right: var(--gap-lg);
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-full);
+      padding: 8px 10px;
+      font-weight: var(--font-bold);
+      font-size: 12px;
+      box-shadow: 0 18px 36px rgba(0,0,0,.10);
+      color: var(--clr-text-main);
+    }
+
+    /* Title & meta */
+    .title {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.25;
+      color: var(--clr-text-main);
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--gap-sm);
+      align-items: center;
+      margin: 6px 0 var(--gap-lg);
+    }
+    .stars i { color: #facc15; }
+    .meta-pill {
+      background: #f3f4f6;
+      border-radius: var(--radius-full);
+      padding: 8px 10px;
+      font-weight: var(--font-bold);
+      font-size: 12px;
+      color: var(--clr-text-main);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Price */
+    .price-box {
+      display: flex;
+      align-items: baseline;
+      gap: var(--gap-sm);
+      flex-wrap: wrap;
+      margin: 10px 0 var(--gap-lg);
+    }
+    .price-final {
+      font-size: 28px;
+      font-weight: var(--font-black);
+      color: var(--clr-text-main);
+    }
+    .price-old {
+      text-decoration: line-through;
+      color: #9ca3af;
+      font-weight: var(--font-bold);
+    }
+    .save-pill {
+      background: #fee2e2;
+      color: #b91c1c;
+      font-weight: var(--font-black);
+      border-radius: var(--radius-full);
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+
+    /* Description */
+    .desc {
+      color: #374151;
+      line-height: 1.55;
+      background: #f9fafb;
+      border: 1px solid var(--clr-border);
+      border-radius: 14px;
+      padding: 12px;
+      margin: 10px 0 var(--gap-lg);
+    }
+
+    /* Specifications grid */
+    .spec {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap-sm);
+      margin: 10px 0 var(--gap-lg);
+    }
+    @media (max-width: 520px) { .spec { grid-template-columns: 1fr; } }
+    .spec .item {
+      border: 1px solid var(--clr-border);
+      border-radius: 14px;
+      padding: 10px;
+      background: var(--clr-white);
+    }
+    .spec .k {
+      color: var(--clr-text-muted);
+      font-size: 12px;
+      font-weight: var(--font-bold);
+    }
+    .spec .v {
+      font-weight: var(--font-black);
+      margin-top: 4px;
+    }
+
+    /* Buy row */
+    .buy-row {
+      display: flex;
+      gap: var(--gap-md);
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .qty {
+      display: flex;
+      align-items: center;
+      gap: var(--gap-sm);
+      background: var(--clr-white);
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 8px 10px;
+    }
+    .qty button {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 12px;
+      background: #f3f4f6;
+      cursor: pointer;
+      font-weight: var(--font-black);
+      font-size: 18px;
+      line-height: 1;
+    }
+    .qty input {
+      width: 52px;
+      text-align: center;
+      border: none;
+      outline: none;
+      font-weight: var(--font-black);
+      font-size: 14px;
+      background: transparent;
+    }
+    .btn-cart { background: var(--clr-accent); color: var(--clr-white); }
+    .btn-buy { background: var(--clr-warning); color: var(--clr-text-main); }
+
+    /* ----------------------------------------
+       Blocks & reviews
+       ---------------------------------------- */
+    .block { margin-top: var(--gap-lg); }
+    .block h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: var(--clr-text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .reviews { display: flex; flex-direction: column; gap: var(--gap-md); }
+
+    .review {
+      background: var(--clr-white);
+      border: 1px solid var(--clr-border);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: var(--shadow-light);
+    }
+    .review-head {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--gap-sm);
+      align-items: flex-start;
+    }
+    .review-user { font-weight: var(--font-black); }
+    .review-title { font-weight: var(--font-black); margin-top: 4px; }
+    .review-content {
+      margin-top: 8px;
+      color: #374151;
+      line-height: 1.5;
+    }
+    .review-stars i { color: #facc15; }
+    .muted {
+      color: var(--clr-text-muted);
+      font-style: italic;
+    }
+
+    /* Related products grid */
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: var(--gap-md);
+    }
+    @media (max-width: 980px) { .related-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 460px) { .related-grid { grid-template-columns: 1fr; } }
+
+    .p-card {
+      border-radius: 16px;
+      border: 1px solid var(--clr-border);
+      background: var(--clr-white);
+      overflow: hidden;
+      box-shadow: var(--shadow-light);
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .p-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(0,0,0,.10);
+    }
+    .p-img { position: relative; }
+    .p-img img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+    }
+    .p-sale {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--clr-error);
+      color: var(--clr-white);
+      font-weight: var(--font-black);
+      font-size: 12px;
+      padding: 6px 8px;
+      border-radius: var(--radius-full);
+    }
+    .p-info { padding: 10px; flex: 1; display: flex; flex-direction: column; }
+    .p-name {
+      margin: 0 0 8px;
+      font-size: 13px;
+      line-height: 1.25;
+      min-height: 34px;
+      font-weight: var(--font-black);
+      color: var(--clr-text-main);
+    }
+    .p-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--gap-sm);
+      margin-top: auto;
+    }
+    .p-price { font-weight: var(--font-black); color: var(--clr-text-main); }
+
+    /* ----------------------------------------
+       Dialogs
+       ---------------------------------------- */
+    dialog {
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 0;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+      max-width: min(560px, 92vw);
+      width: 100%;
+      box-shadow: var(--shadow-strong);
+      overflow: hidden;
+    }
+    dialog::backdrop {
+      background: rgba(17,24,39,.55);
+      backdrop-filter: blur(2px);
+    }
+    .dlg { padding: 16px; background: var(--clr-white); }
+    .dlg h3 { margin: 0; font-size: 18px; color: var(--clr-text-main); }
+    .dlg .sub { margin: 6px 0 0; color: var(--clr-text-muted); font-size: 13px; }
+    .dlg .row {
+      display: flex;
+      gap: var(--gap-md);
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: var(--gap-lg);
+    }
+    .dlg input[type="number"] {
+      width: 120px;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      font-weight: var(--font-black);
+      font-size: 14px;
+    }
+    .dlg .actions {
+      display: flex;
+      gap: var(--gap-md);
+      justify-content: flex-end;
+      margin-top: var(--gap-lg);
+    }
+    .dlg .actions button {
+      border: none;
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-weight: var(--font-black);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .dlg .ok { background: var(--clr-accent); color: var(--clr-white); }
+    .dlg .cancel {
+      background: var(--clr-white);
+      border: 1px solid #e5e7eb;
+      color: var(--clr-text-main);
+    }
+    .dlgHead {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--gap-md);
+    }
+    .dlgX {
+      border: none;
+      background: #f3f4f6;
+      border-radius: 12px;
+      width: 36px; height: 36px;
+      cursor: pointer;
+      font-weight: var(--font-black);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    /* Image zoom dialog */
+    #imgDialog { background: transparent; box-shadow: none; max-width: 92vw; width: auto; }
+    #imgDialog::backdrop { background: rgba(0,0,0,.75); }
+    .imgWrap {
+      width: min(1100px, 92vw);
+      height: min(86vh, 760px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    #zoomImg {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .imgClose {
+      position: fixed;
+      top: var(--gap-lg);
+      right: var(--gap-lg);
+      z-index: 10000;
+      width: 42px; height: 42px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      background: rgba(255,255,255,.16);
+      color: var(--clr-white);
+      font-size: 18px;
+      font-weight: var(--font-black);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ----------------------------------------
+       Toast
+       ---------------------------------------- */
+    .toast {
+      position: fixed;
+      right: var(--gap-lg);
+      bottom: var(--gap-lg);
+      z-index: 9999;
+      background: var(--clr-text-main);
+      color: var(--clr-white);
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.25);
+      max-width: 360px;
+      display: none;
+    }
+    .toast.show { display: block; }
+    .toast .t {
+      font-weight: var(--font-black);
+      margin: 0 0 4px;
+    }
+    .toast .d {
+      margin: 0;
+      color: #d1d5db;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    /* ----------------------------------------
+       Skeleton loaders
+       ---------------------------------------- */
+    .sk {
+      background: linear-gradient(90deg,#f2f2f2,#f8f8f8,#f2f2f2);
+      background-size: 200% 100%;
+      animation: sk 1.1s infinite;
+    }
+    @keyframes sk { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+    .sk-img { height: 460px; border-radius: var(--radius-lg); }
+    .sk-ln {
+      height: 14px;
+      border-radius: var(--radius-full);
+      margin: 10px 0;
+    }
+    .sk-ln.lg { width: 90%; }
+    .sk-ln.md { width: 70%; }
+    .sk-ln.sm { width: 40%; }
+
+    /* Forms inside review card */
+    #reviewBox input,
+    #reviewBox textarea,
+    #reviewBox select {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 6px 0;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: var(--font-black);
+      resize: vertical;
+    }
+    #reviewBox textarea { min-height: 100px; }
+    #reviewBox select { appearance: none; }
+  </style>
+</head>
+
+<body>
+  <div id="topbar-container"></div>
+
+  <div class="page">
+    <!-- top actions -->
+    <div class="top-actions">
+      <button class="btn btn-ghost" id="backBtn" type="button">
+        <i class="fa-solid fa-arrow-left"></i>
+        Quay lại
+      </button>
+      <div class="crumb" id="crumb">Đang tải...</div>
+    </div>
+
+    <!-- product detail skeleton / content -->
+    <div id="product-detail-container">
+      <div class="wrap">
+        <div class="card sk sk-img"></div>
+        <div class="card pad">
+          <div class="sk sk-ln lg"></div>
+          <div class="sk sk-ln sm"></div>
+          <div class="sk sk-ln md"></div>
+          <div class="sk sk-ln lg"></div>
+          <div class="sk sk-ln md"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- reviews section -->
+    <div class="block">
+      <h2><i class="fa-solid fa-comment-dots"></i> Đánh giá người dùng</h2>
+
+      <div class="reviews">
+        <!-- write review -->
+        <div class="card pad" id="reviewBox" style="margin-bottom:12px">
+          <h2>✍️ Viết đánh giá</h2>
+
+          <div id="reviewNeedLogin" class="muted" style="display:none">
+            Bạn cần đăng nhập để đánh giá sản phẩm.
+          </div>
+
+          <form id="reviewForm" style="display:none">
+            <input id="rvTitle" placeholder="Tiêu đề đánh giá" required>
+
+            <select id="rvRating" required>
+              <option value="">Chọn số sao</option>
+              <option value="5">★★★★★ Rất tốt</option>
+              <option value="4">★★★★☆ Tốt</option>
+              <option value="3">★★★☆☆ Bình thường</option>
+              <option value="2">★★☆☆☆ Kém</option>
+              <option value="1">★☆☆☆☆ Rất kém</option>
+            </select>
+
+            <textarea id="rvContent" placeholder="Nội dung đánh giá" required></textarea>
+
+            <button class="btn btn-cart" type="submit">
+              <i class="fa-solid fa-paper-plane"></i> Gửi đánh giá
+            </button>
+          </form>
+        </div>
+
+        <!-- review list -->
+        <div id="reviews-container">
+          <div class="review sk" style="height:96px"></div>
+          <div class="review sk" style="height:96px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- related products -->
+    <div class="block">
+      <h2><i class="fa-solid fa-layer-group"></i> Sản phẩm tương tự</h2>
+      <div class="related-grid" id="related-container">
+        <div class="p-card sk" style="height:250px"></div>
+        <div class="p-card sk" style="height:250px"></div>
+        <div class="p-card sk" style="height:250px"></div>
+        <div class="p-card sk" style="height:250px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dialog: quantity -->
+  <dialog id="quantityDialog">
+    <div class="dlg">
+      <div class="dlgHead">
+        <div>
+          <h3>Chọn số lượng</h3>
+          <div class="sub" id="dlgName">Sản phẩm</div>
+        </div>
+        <button class="dlgX" type="button"
+                aria-label="Đóng"
+                onclick="document.getElementById('quantityDialog').close()">✕</button>
+      </div>
+
+      <div class="row">
+        <div style="font-weight:1000">Số lượng</div>
+        <input type="number" id="quantityInput" min="1" value="1" />
+      </div>
+
+      <div class="actions">
+        <button class="cancel" type="button"
+                onclick="document.getElementById('quantityDialog').close()">Hủy</button>
+        <button class="ok" type="button" onclick="confirmAddToCart()">Xác nhận</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Dialog: add success -->
+  <dialog id="cart-dialog">
+    <div class="dlg">
+      <div class="dlgHead">
+        <div>
+          <h3>✅ Đã thêm vào giỏ</h3>
+          <div class="sub">Bạn muốn làm gì tiếp?</div>
+        </div>
+        <button class="dlgX" type="button"
+                aria-label="Đóng"
+                onclick="document.getElementById('cart-dialog').close()">✕</button>
+      </div>
+      <div class="actions">
+        <button class="cancel" type="button"
+                onclick="document.getElementById('cart-dialog').close()">Tiếp tục xem</button>
+        <button class="ok" type="button"
+                onclick="location.href='/cart.html'">Xem giỏ hàng</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Dialog: message -->
+  <dialog id="customDialog">
+    <div class="dlg">
+      <div class="dlgHead">
+        <div>
+          <h3>Thông báo</h3>
+          <div class="sub">Vui lòng kiểm tra</div>
+        </div>
+        <button class="dlgX" type="button"
+                aria-label="Đóng"
+                onclick="document.getElementById('customDialog').close()">✕</button>
+      </div>
+      <p id="dialogMessage"
+         style="margin:12px 0 0;color:#374151">...</p>
+      <div class="actions">
+        <button class="ok" type="button"
+                onclick="document.getElementById('customDialog').close()">OK</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Dialog: image zoom -->
+  <dialog id="imgDialog">
+    <button class="imgClose" type="button" id="imgCloseBtn"
+            aria-label="Đóng ảnh">✕</button>
+    <div class="imgWrap">
+      <img id="zoomImg" alt="zoom" />
+    </div>
+  </dialog>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <p class="t" id="toastTitle">Thông báo</p>
+    <p class="d" id="toastDesc"></p>
+  </div>
+
+  <!-- Firebase compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-init.js"></script>
+
+  <!-- Other scripts -->
+  <script src="/js/auth.js"></script>
+  <script src="/js/topbar.js" defer></script>
+  <script src="/js/redirect.js" defer></script>
+  <script src="/js/detail.js"></script>
+
+
+  <!-- Inline page JS -->
+  <script>
+    /* ----------------------------------------
+       Setup: globals & helpers
+       ---------------------------------------- */
+    let selectedProduct = null;
+    let currentStock = 0;
+
+    
+
+    /* ----------------------------------------
+       Gallery slider (3 images auto)
+       ---------------------------------------- */
+    let galleryImgs = [];
+    let galleryIndex = 0;
+    let galleryTimer = null;
+
+    function get3ImagesFromProduct(product) {
+      // Prefer array: images: ["url1","url2","url3"]
+      if (Array.isArray(product?.images) && product.images.length) {
+        const arr = product.images.filter(Boolean).slice(0, 3);
+        if (arr.length === 1) return [arr[0], arr[0], arr[0]];
+        if (arr.length === 2) return [arr[0], arr[1], arr[0]];
+        return arr;
+      }
+
+      // Fallback: image / image2 / image3
+      const a = [product?.image, product?.image2, product?.image3].filter(Boolean);
+      if (a.length === 1) return [a[0], a[0], a[0]];
+      if (a.length === 2) return [a[0], a[1], a[0]];
+      return (a.length ? a : ["", "", ""]).slice(0, 3);
+    }
+
+    function renderGallery(images) {
+      galleryImgs = (images || []).filter(Boolean);
+      galleryIndex = 0;
+
+      const slider = document.getElementById("gallerySlider");
+      const dots = document.getElementById("galleryDots");
+      if (!slider || !dots) return;
+
+      slider.innerHTML = galleryImgs.map((src, i) =>
+        `<img class="${i === 0 ? "active" : ""}" data-idx="${i}" src="${src}" alt="product-${i}">`
+      ).join("");
+
+      dots.innerHTML = galleryImgs.map((_, i) =>
+        `<button class="g-dot ${i === 0 ? "active" : ""}" type="button" onclick="galleryGo(${i})"></button>`
+      ).join("");
+
+      slider.querySelectorAll("img").forEach(img => {
+        img.addEventListener("click", () => {
+          const idx = Number(img.getAttribute("data-idx") || 0);
+          galleryGo(idx);
+          openZoomCurrent();
+        });
+      });
+
+      startGalleryAuto();
+    }
+
+    function setGalleryActive() {
+      const slider = document.getElementById("gallerySlider");
+      const dots = document.getElementById("galleryDots");
+      if (!slider || !dots) return;
+
+      slider.querySelectorAll("img").forEach((img, i) => {
+        img.classList.toggle("active", i === galleryIndex);
+      });
+      dots.querySelectorAll(".g-dot").forEach((d, i) => {
+        d.classList.toggle("active", i === galleryIndex);
+      });
+    }
+
+    function galleryGo(i) {
+      if (!galleryImgs.length) return;
+      galleryIndex = (i + galleryImgs.length) % galleryImgs.length;
+      setGalleryActive();
+      startGalleryAuto(); // reset timer when user interacts
+    }
+
+    function galleryNext() { galleryGo(galleryIndex + 1); }
+    function galleryPrev() { galleryGo(galleryIndex - 1); }
+
+    function startGalleryAuto() {
+      clearInterval(galleryTimer);
+      if (galleryImgs.length <= 1) return;
+      galleryTimer = setInterval(() => galleryNext(), 2200);
+    }
+
+    function openZoomCurrent() {
+      const src = galleryImgs[galleryIndex] || "";
+      if (!src) return;
+      const zi = document.getElementById("zoomImg");
+      const dlg = document.getElementById("imgDialog");
+      if (zi) zi.src = src;
+      if (dlg) dlg.showModal();
+    }
+
+const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get("id");
+
+    const toast = document.getElementById("toast");
+    const toastTitle = document.getElementById("toastTitle");
+    const toastDesc = document.getElementById("toastDesc");
+
+    function showToast(title = "Thông báo", desc = "") {
+      toastTitle.textContent = title;
+      toastDesc.textContent = desc;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    function showDialog(message) {
+      document.getElementById("dialogMessage").textContent = message;
+      document.getElementById("customDialog").showModal();
+    }
+
+    function safeText(s){ return (s ?? "").toString(); }
+
+    function renderStars(rating = 0) {
+      rating = Math.max(0, Math.min(5, Number(rating)));
+      const full = Math.floor(rating);
+      const half = (rating - full) >= 0.5;
+      const empty = 5 - full - (half ? 1 : 0);
+      let html = "";
+      for(let i=0; i<full; i++) html += `<i class="fas fa-star"></i>`;
+      if(half) html += `<i class="fas fa-star-half-stroke"></i>`;
+      for(let i=0; i<empty; i++) html += `<i class="far fa-star"></i>`;
+      return `<span class="stars">${html}</span>`;
+    }
+
+    /* ----------------------------------------
+       DOM ready
+       ---------------------------------------- */
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Firestore init check
+      if (!window.firebase || !firebase.apps || !firebase.apps.length) {
+        document.getElementById("product-detail-container").innerHTML =
+          `<div class="card pad"><b>❌ Firebase chưa được khởi tạo (kiểm tra /js/firebase-init.js).</b></div>`;
+        return;
+      }
+      window.__DB__ = firebase.firestore();
+
+      // back button
+      const backBtn = document.getElementById("backBtn");
+      if (backBtn) backBtn.onclick = () => history.back();
+
+      // backdrop click closes dialog
+      ["quantityDialog","cart-dialog","customDialog","imgDialog"].forEach(makeDialogBackdropClosable);
+
+      // explicit close for image dialog
+      document.getElementById("imgCloseBtn").addEventListener("click", () => {
+        document.getElementById("imgDialog").close();
+      });
+
+      // load product data
+      await loadProductDetail();
+    });
+
+    function makeDialogBackdropClosable(id){
+      const dlg = document.getElementById(id);
+      if(!dlg) return;
+      dlg.addEventListener("click", (e) => {
+        if(e.target === dlg) dlg.close();
+      });
+    }
+
+    /* ----------------------------------------
+       Product loading & rendering
+       ---------------------------------------- */
+    async function loadProductDetail() {
+      const db = window.__DB__;
+
+      if (!productId) {
+        document.getElementById("product-detail-container").innerHTML =
+          `<div class="card pad"><b>❌ Thiếu ID sản phẩm (detail.html?id=...)</b></div>`;
+        document.getElementById("crumb").textContent = "Thiếu ID";
+        return;
+      }
+
+// 🔥 REALTIME PRODUCT LISTENER (ADMIN CHỈNH KHO → USER THẤY NGAY)
+db.collection("products").doc(productId).onSnapshot(async (doc) => {
+  if (!doc.exists) {
+    document.getElementById("product-detail-container").innerHTML =
+      `<div class="card pad"><b>❌ Không tìm thấy sản phẩm.</b></div>`;
+    document.getElementById("crumb").textContent = "Không tìm thấy";
+    return;
+  }
+
+  const product = { id: doc.id, ...doc.data() };
+  selectedProduct = product;
+  currentStock = Number(product.stock || 0);
+
+  const discount = Number(product.discount || 0);
+  const finalPrice = discount ? product.price * (1 - discount / 100) : product.price;
+  const saved = discount ? product.price - finalPrice : 0;
+
+  // load reviews (không realtime để tránh nặng)
+  const reviewsSnapshot = await db
+    .collection("products")
+    .doc(productId)
+    .collection("reviews")
+    .get();
+
+  let totalRating = 0;
+  const reviewCount = reviewsSnapshot.size;
+  reviewsSnapshot.forEach(d => totalRating += Number(d.data().rating || 0));
+  const averageRating = reviewCount ? totalRating / reviewCount : 0;
+
+  // breadcrumb
+  document.getElementById("crumb").textContent =
+    `${safeText(product.category1 || "Sản phẩm")} / ${safeText(product.category2 || "")}`
+      .replace(/\/\s*$/, "");
+
+  // render main content (GIỮ NGUYÊN HTML CỦA BẠN)
+  document.getElementById("product-detail-container").innerHTML = `
+    <div class="wrap">
+      <div class="card gallery">
+        <div class="gallery-slider" id="gallerySlider"></div>
+
+        <button class="g-nav g-prev" type="button" onclick="galleryPrev()">‹</button>
+        <button class="g-nav g-next" type="button" onclick="galleryNext()">›</button>
+        <div class="g-dots" id="galleryDots"></div>
+
+        ${discount ? `<div class="badge-sale">-${discount}%</div>` : ""}
+        <div class="badge-chip"><i class="fa-solid fa-shield"></i> Chính hãng</div>
+      </div>
+
+<div class="card pad">
+        <h1 class="title">${safeText(product.name)}</h1>
+
+        <div class="meta-row">
+          <span class="meta-pill">${renderStars(averageRating)}
+            <b style="margin-left:6px">${averageRating.toFixed(1)}</b> (${reviewCount})
+          </span>
+          <span class="meta-pill">
+            <i class="fa-solid fa-tag"></i> ${safeText(product.brand || "Bandai")}
+          </span>
+          <span class="meta-pill">
+            <i class="fa-solid fa-box"></i> Đã bán: ${Number(product.sold || 0)}
+          </span>
+          <span class="meta-pill"
+            style="background:${currentStock>0?'#ecfdf5':'#fee2e2'};
+                   color:${currentStock>0?'#166534':'#991b1b'}">
+            <i class="fa-solid fa-warehouse"></i>
+            ${currentStock>0 ? `Còn ${currentStock}` : 'Hết hàng'}
+          </span>
+        </div>
+
+        <div class="price-box">
+          <div class="price-final">${finalPrice.toLocaleString("vi-VN")}₫</div>
+          ${discount ? `<div class="price-old">${Number(product.price||0).toLocaleString("vi-VN")}₫</div>` : ""}
+          ${discount ? `<div class="save-pill">Tiết kiệm ${saved.toLocaleString("vi-VN")}₫</div>` : ""}
+        </div>
+
+        <div class="desc">${product.description || "Không có mô tả."}</div>
+
+        <div class="spec">
+          <div class="item">
+            <div class="k">Danh mục</div>
+            <div class="v">${safeText(product.category1 || "-")} / ${safeText(product.category2 || "-")}</div>
+          </div>
+          <div class="item">
+            <div class="k">Grade</div>
+            <div class="v">${safeText(product.grade || "-")}</div>
+          </div>
+          <div class="item">
+            <div class="k">Ngày phát hành</div>
+            <div class="v">${safeText(product.releaseDate || "Không có thông tin")}</div>
+          </div>
+          <div class="item">
+            <div class="k">Mã sản phẩm</div>
+            <div class="v">${safeText(product.id)}</div>
+          </div>
+        </div>
+
+        <div class="buy-row">
+          <div class="qty">
+            <button type="button" onclick="stepQty(-1)">−</button>
+            <input id="quickQty" value="1" readonly />
+            <button type="button" onclick="stepQty(1)">+</button>
+          </div>
+
+          <button class="btn btn-cart" type="button"
+            ${currentStock<=0?'disabled':''}
+            onclick="openQtyDialog()">
+            <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ
+          </button>
+
+          <button class="btn btn-buy" type="button"
+            ${currentStock<=0?'disabled':''}
+            onclick="buyNow()">
+            <i class="fa-solid fa-bolt"></i> Mua ngay
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // gallery (3 images auto) + zoom
+  renderGallery(get3ImagesFromProduct(product));
+
+  await loadReviews(productId);
+  initReviewForm();
+  await loadRelatedProducts(product);
+});
+        console.error("Lỗi khi tải sản phẩm:", error);
+        document.getElementById("product-detail-container").innerHTML =
+          `<div class="card pad"><b>❌ Lỗi khi tải chi tiết sản phẩm.</b></div>`;
+        document.getElementById("crumb").textContent = "Lỗi tải dữ liệu";
+      }
+    
+    /* ----------------------------------------
+       Quantity controls
+       ---------------------------------------- */
+    function stepQty(delta){
+      const el = document.getElementById("quickQty");
+      const v = Math.max(1, Number(el.value || 1) + Number(delta || 0));
+      el.value = String(v);
+    }
+
+    function openQtyDialog(){
+      if(!selectedProduct) return;
+      if (currentStock <= 0) {
+    showToast("Hết hàng", "Sản phẩm này hiện không còn trong kho.");
+    return;
+  }
+      const v = Number(document.getElementById("quickQty")?.value || 1);
+      document.getElementById("dlgName").textContent = selectedProduct.name || "Sản phẩm";
+      document.getElementById("quantityInput").value = String(v);
+      document.getElementById("quantityDialog").showModal();
+    }
+
+    function buyNow(){
+  if (currentStock <= 0) {
+    showToast("Hết hàng", "Không thể mua sản phẩm đã hết kho.");
+    return;
+  }
+  openQtyDialog();
+
+      showToast("Mua ngay", "Xác nhận số lượng để thêm vào giỏ, sau đó qua giỏ hàng thanh toán.");
+    }
+
+    /* ----------------------------------------
+       Reviews loading
+       ---------------------------------------- */
+    async function loadReviews(productId) {
+      const db = window.__DB__;
+      const box = document.getElementById("reviews-container");
+
+      try {
+        const snap = await db.collection("products")
+                             .doc(productId).collection("reviews").get();
+        const reviews = snap.docs.map(d => d.data());
+
+        if (!reviews.length) {
+          box.innerHTML = `<div class="review"><span class="muted">Chưa có đánh giá.</span></div>`;
+          return;
+        }
+
+        // gather usernames
+        const userIds = [...new Set(reviews.map(r => String(r.userId || "")).filter(Boolean))];
+        const accountDocs = await Promise.all(
+          userIds.map(uid => db.collection("accounts").doc(uid).get().catch(()=>null))
+        );
+        const accountMap = {};
+        accountDocs.forEach(d => {
+          if(d && d.exists) accountMap[d.id] = (d.data().username || "Ẩn danh");
+        });
+
+        // render reviews sorted newest first
+        box.innerHTML = reviews
+          .sort((a,b) => {
+            const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+            const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+            return tb - ta;
+          })
+          .map(r => {
+            const name = accountMap[String(r.userId)] || "Ẩn danh";
+            const stars = renderStars(r.rating || 0);
+            const title = safeText(r.title || "Đánh giá");
+            const content = safeText(r.content || "");
+            return `
+              <div class="review">
+                <div class="review-head">
+                  <div>
+                    <div class="review-user"><i class="fa-solid fa-user"></i> ${name}</div>
+                    <div class="review-title">${title}</div>
+                  </div>
+                  <div class="review-stars">${stars}</div>
+                </div>
+                <div class="review-content">${content}</div>
+              </div>
+            `;
+          }).join("");
+
+      } catch (e) {
+        console.error("Lỗi khi tải đánh giá:", e);
+        box.innerHTML = `<div class="review"><span class="muted">Không thể tải đánh giá.</span></div>`;
+      }
+    }
+
+    /* ----------------------------------------
+       Related products
+       ---------------------------------------- */
+    async function loadRelatedProducts(currentProduct) {
+      const db = window.__DB__;
+      const container = document.getElementById("related-container");
+
+      try {
+        const snap = await db.collection("products").get();
+        const products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const related = products
+          .filter(p => p.id !== currentProduct.id &&
+            (p.category1 === currentProduct.category1 || p.category2 === currentProduct.category2)
+          )
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4);
+
+        if (!related.length) {
+          container.innerHTML =
+            `<div class="p-card pad"><span class="muted">Không có sản phẩm tương tự.</span></div>`;
+          return;
+        }
+
+        container.innerHTML = related.map(p => {
+          const discount = Number(p.discount || 0);
+          const finalPrice = discount ? p.price * (1 - discount/100) : p.price;
+          return `
+            <div class="p-card" onclick="redirect('${p.id}')">
+              <div class="p-img">
+                <img src="${p.image}" alt="${safeText(p.name)}" />
+                ${discount ? `<div class="p-sale">-${discount}%</div>` : ""}
+              </div>
+              <div class="p-info">
+                <p class="p-name">${safeText(p.name)}</p>
+                <div class="p-meta">
+                  <span class="p-price">${finalPrice.toLocaleString("vi-VN")}₫</span>
+                  <span class="meta-pill" style="padding:6px 8px">
+                    <i class="fa-solid fa-bag-shopping"></i> ${Number(p.sold||0)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+      } catch (err) {
+        console.error("Lỗi khi tải sản phẩm liên quan:", err);
+        container.innerHTML =
+          `<div class="p-card pad"><span class="muted">❌ Lỗi khi tải sản phẩm liên quan.</span></div>`;
+      }
+    }
+
+    /* ----------------------------------------
+       Add to cart / confirm
+       ---------------------------------------- */
+    async function confirmAddToCart() {
+      const db = window.__DB__;
+      const quantity = parseInt(document.getElementById("quantityInput").value, 10);
+      if (quantity > currentStock) {
+  showDialog(`❌ Chỉ còn ${currentStock} sản phẩm trong kho.`);
+  return;
+}
+
+      document.getElementById("quantityDialog").close();
+
+      if (!selectedProduct || !Number.isFinite(quantity) || quantity < 1) {
+        showDialog("❌ Số lượng không hợp lệ.");
+        return;
+      }
+
+      const userData = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+      if (!userData?.userId) {
+        showDialog("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+        return;
+      }
+
+      const cartRef = db.collection("accounts")
+                        .doc(String(userData.userId))
+                        .collection("cart")
+                        .doc(String(selectedProduct.id));
+
+      try {
+        const doc = await cartRef.get();
+        if (doc.exists) {
+          await cartRef.update({
+            quantity: firebase.firestore.FieldValue.increment(quantity),
+            updatedAt: new Date(),
+            id: String(selectedProduct.id),
+          });
+        } else {
+          await cartRef.set({
+            id: String(selectedProduct.id),
+            quantity: quantity,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+        }
+
+        showToast("Thành công", "Đã thêm sản phẩm vào giỏ hàng.");
+        document.getElementById("cart-dialog").showModal();
+      } catch (err) {
+        console.error("Lỗi thêm vào giỏ hàng:", err);
+        showDialog("❌ Thêm sản phẩm thất bại.");
+      }
+    }
+
+    /* ----------------------------------------
+       Login check helper
+       ---------------------------------------- */
+    function getLoggedInUser() {
+      try {
+        const u = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+        if (localStorage.getItem("loginStatus") === "logged_in" && u.userId) {
+          return u;
+        }
+      } catch {}
+      return null;
+    }
+
+    /* ----------------------------------------
+       Init review form
+       ---------------------------------------- */
+    function initReviewForm() {
+      const user = getLoggedInUser();
+      const needLogin = document.getElementById("reviewNeedLogin");
+      const form = document.getElementById("reviewForm");
+
+      if (!needLogin || !form) return;
+
+      if (!user) {
+        needLogin.style.display = "block";
+        form.style.display = "none";
+        return;
+      }
+
+      needLogin.style.display = "none";
+      form.style.display = "block";
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById("rvTitle").value.trim();
+        const rating = Number(document.getElementById("rvRating").value);
+        const content = document.getElementById("rvContent").value.trim();
+
+        if (!title || !rating || !content) {
+          showDialog("❌ Vui lòng nhập đầy đủ tiêu đề, sao và nội dung.");
+          return;
+        }
+
+        try {
+          await db.collection("products")
+                  .doc(productId)
+                  .collection("reviews")
+                  .add({
+                    userId: String(user.userId),
+                    rating,
+                    title,
+                    content,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                  });
+
+          // reset form
+          document.getElementById("rvTitle").value = "";
+          document.getElementById("rvRating").value = "";
+          document.getElementById("rvContent").value = "";
+
+          showToast("Thành công", "Đánh giá của bạn đã được gửi.");
+          await loadReviews(productId);
+
+        } catch (err) {
+          console.error("Lỗi gửi đánh giá:", err);
+          showDialog("❌ Không thể gửi đánh giá. Vui lòng thử lại.");
+        }
+      };
+    }
+  </script>
+</body>
+</html>

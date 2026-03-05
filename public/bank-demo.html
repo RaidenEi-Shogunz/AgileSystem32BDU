@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Ngân hàng (Demo) | Payment</title>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js"></script>
+  <script src="/js/firebase-init.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6f7fb; --text:#0f172a; --muted:#64748b; --line:rgba(15,23,42,.12);
+      --shadow:0 18px 60px rgba(2,6,23,.10); --radius:18px; --blue:#2563eb; --pink:#e91e63; --green:#16a34a; --red:#ef4444;
+    }
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
+      background: radial-gradient(1200px 500px at 20% -10%, rgba(255,152,0,.14), transparent 55%),
+                  radial-gradient(1200px 500px at 90% 0%, rgba(37,99,235,.12), transparent 55%), var(--bg);
+    }
+    .wrap{max-width:720px;margin:0 auto;padding:18px 12px;}
+    .card{
+      background:rgba(255,255,255,.92); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .head{padding:14px 14px 10px; border-bottom:1px solid rgba(0,0,0,.06);
+      background:linear-gradient(180deg, rgba(37,99,235,.10), transparent 70%);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+    }
+    .title{margin:0;font-size:16px;font-weight:1000}
+    .muted{color:var(--muted);font-weight:850;font-size:13px}
+    .body{padding:14px; display:grid; gap:12px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:640px){.grid{grid-template-columns:1fr}}
+    .input, select{
+      width:100%; padding:10px 12px; border-radius:14px; border:1px solid rgba(0,0,0,.10);
+      background:#fff; font-weight:850; outline:none;
+    }
+    .input:focus, select:focus{border-color:rgba(37,99,235,.35); box-shadow:0 0 0 4px rgba(37,99,235,.10)}
+    .rowline{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+    .amount{font-weight:1000;font-size:20px;color:var(--pink)}
+    .btn{
+      border:0;border-radius:14px;padding:10px 12px;font-weight:950;cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      transition:transform .12s ease, opacity .12s ease;
+      user-select:none;
+    }
+    .btn:active{transform:scale(.99)}
+    .btn[disabled]{opacity:.65; cursor:not-allowed}
+    .btn-blue{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff}
+    .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--text)}
+    .pill{font-size:12px;font-weight:950;padding:6px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.08);background:rgba(255,152,0,.12);color:#7a3e00}
+    .ok{padding:10px;border-radius:14px;background:rgba(22,163,74,.10);border:1px solid rgba(22,163,74,.18);color:#0b6b2a;font-weight:900}
+    .err{padding:10px;border-radius:14px;background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.18);color:#7a0b0b;font-weight:900}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="head">
+        <h1 class="title">🏦 Cổng ngân hàng (Demo)</h1>
+        <span class="pill">Mô phỏng Internet Banking</span>
+      </div>
+
+      <div class="body">
+        <div class="rowline">
+          <div style="display:grid;gap:4px">
+            <div style="font-weight:1000">Mã đơn: <span id="orderCode" style="color:var(--pink)"></span></div>
+            <div class="muted">Phương thức: <b id="payType"></b></div>
+          </div>
+          <div style="text-align:right">
+            <div class="muted">Số tiền</div>
+            <div class="amount" id="amountText">0₫</div>
+          </div>
+        </div>
+
+
+        <div class="grid">
+          <div>
+            <div class="muted" style="margin-bottom:6px">Ngân hàng</div>
+            <select id="bank">
+              <option value="">-- Chọn ngân hàng --</option>
+              <option>Vietcombank</option>
+              <option>VietinBank</option>
+              <option>BIDV</option>
+              <option>ACB</option>
+              <option>Techcombank</option>
+              <option>MB Bank</option>
+            </select>
+          </div>
+          <div>
+            <div class="muted" style="margin-bottom:6px">Số tài khoản</div>
+            <input id="acc" class="input" placeholder="VD: 1234567890" inputmode="numeric" />
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <div class="muted" style="margin-bottom:6px">Tên chủ tài khoản</div>
+            <input id="name" class="input" placeholder="VD: GUNDAM STORE" />
+          </div>
+          <div>
+            <div class="muted" style="margin-bottom:6px">OTP</div>
+            <input id="otp" class="input" placeholder="VD: 123456" inputmode="numeric" />
+          </div>
+        </div>
+
+        <div id="msg"></div>
+
+        <div class="rowline">
+          <button class="btn btn-ghost" id="btnClose" type="button">Đóng</button>
+          <button class="btn btn-blue" id="btnPay" type="button">Xác nhận thanh toán</button>
+        </div>
+
+        <div class="muted">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dbRef = firebase.firestore();
+    const FieldValue = firebase.firestore.FieldValue;
+    const Timestamp = firebase.firestore.Timestamp;
+
+    const qs = new URLSearchParams(location.search);
+    const orderId   = String(qs.get("orderId") || "");
+    const orderCode = String(qs.get("orderCode") || "");
+    const amount    = Number(qs.get("amount") || 0);
+    const payType   = String(qs.get("payType") || "bank");
+
+    const openerOrigin = String(qs.get("origin") || location.origin);
+
+    const currentUser = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+    const userId = currentUser?.userId ? String(currentUser.userId) : "";
+
+    const elOrderCode = document.getElementById("orderCode");
+    const elPayType   = document.getElementById("payType");
+    const elAmount    = document.getElementById("amountText");
+    const elMsg       = document.getElementById("msg");
+    const btnPay      = document.getElementById("btnPay");
+    const btnClose    = document.getElementById("btnClose");
+
+    elOrderCode.textContent = orderCode || orderId || "(Không có)";
+    elPayType.textContent   = (payType || "BANK").toUpperCase();
+    elAmount.textContent    = (amount || 0).toLocaleString("vi-VN") + "₫";
+
+    function setMsg(type, text){
+      if(!text){ elMsg.innerHTML=""; return; }
+      elMsg.innerHTML = `<div class="${type}">${text}</div>`;
+    }
+
+    function genTxn() {
+      return "TXN-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+    }
+
+    function onlyDigits(s){ return String(s || "").replace(/\D/g, ""); }
+
+    function notifyResult(status, txn){
+      try{
+        localStorage.setItem("pay_result_" + orderId, JSON.stringify({
+          status,
+          txn: txn || "",
+          at: Date.now()
+        }));
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage(
+            { type: "PAY_RESULT", orderId, status, txn: txn || "" },
+            openerOrigin || location.origin
+          );
+        }
+      }catch(e){
+        console.warn("notifyResult fail:", e);
+      }
+    }
+
+    async function submitPay(){
+      setMsg("", "");
+      if(!orderId){
+        setMsg("err", "Thiếu orderId. Vui lòng quay lại giỏ hàng và thử lại.");
+        return;
+      }
+
+      const bank = (document.getElementById("bank").value || "").trim();
+      const acc  = onlyDigits(document.getElementById("acc").value || "").trim();
+      const name = (document.getElementById("name").value || "").trim().toUpperCase();
+      const otp  = onlyDigits(document.getElementById("otp").value || "").trim();
+
+      if(!bank || !acc || !name || !otp){
+        setMsg("err", "Vui lòng nhập đầy đủ thông tin.");
+        return;
+      }
+
+      const OK_ACC = "1234567890";
+      const OK_NAME = "GUNDAM STORE";
+      const OK_OTP = "123456";
+
+      if(acc !== OK_ACC || name !== OK_NAME || otp !== OK_OTP){
+        setMsg("err", "Thông tin không đúng (demo). Kiểm tra STK/Tên/OTP.");
+        notifyResult("failed");
+        return;
+      }
+
+      btnPay.disabled = true;
+      btnPay.textContent = "Đang xử lý...";
+
+      try{
+        const txn = genTxn();
+
+        const nowServer = FieldValue.serverTimestamp(); // ✅ dùng cho field thường
+        const nowClient = Timestamp.now();              // ✅ dùng cho history item (arrayUnion)
+
+        const orderRef = dbRef.collection("orders").doc(orderId);
+        const orderSnap = await orderRef.get();
+
+        if(!orderSnap.exists){
+          setMsg("err", "Không tìm thấy đơn hàng trên hệ thống. Kiểm tra orderId.");
+          notifyResult("failed");
+          return;
+        }
+
+        // Khớp với admin-functions.js của bạn
+        const NEW_STATUS = "CONFIRMED";
+
+        const historyItem = {
+          status: NEW_STATUS,
+          note: "Thanh toán ngân hàng (demo) thành công",
+          at: nowClient,
+          paymentRef: txn
+        };
+
+        await orderRef.set({
+          status: NEW_STATUS,
+          paymentType: payType,
+          paymentStatus: "paid",
+          paymentRef: txn,
+          paidAt: nowServer,
+          updatedAt: nowServer,
+          history: FieldValue.arrayUnion(historyItem)
+        }, { merge: true });
+
+        if(userId){
+          const userOrderRef = dbRef.collection("accounts").doc(userId).collection("orderHistory").doc(orderId);
+          await userOrderRef.set({
+            status: NEW_STATUS,
+            paymentType: payType,
+            paymentStatus: "paid",
+            paymentRef: txn,
+            paidAt: nowServer,
+            updatedAt: nowServer,
+            history: FieldValue.arrayUnion(historyItem)
+          }, { merge: true });
+        }
+
+        setMsg("ok", `✅ Thanh toán thành công. Mã giao dịch: ${txn}`);
+        notifyResult("paid", txn);
+
+        setTimeout(() => { try { window.close(); } catch(e){} }, 800);
+
+      }catch(e){
+        console.error(e);
+        setMsg("err", "Không cập nhật được trạng thái thanh toán. Kiểm tra Firestore rules/quyền truy cập.");
+        notifyResult("failed");
+      }finally{
+        btnPay.disabled = false;
+        btnPay.textContent = "Xác nhận thanh toán";
+      }
+    }
+
+    btnPay.addEventListener("click", submitPay);
+    btnClose.addEventListener("click", () => { try { window.close(); } catch(e) {} });
+  </script>
+</body>
+</html>

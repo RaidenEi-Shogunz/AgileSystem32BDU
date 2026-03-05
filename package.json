@@ -1,0 +1,1 @@
+{"dependencies":{"cors":"^2.8.5","express":"^5.2.1","firebase-admin":"^13.4.0","multer":"^2.0.2","sharp":"^0.34.3"},"scripts":{"start":"concurrently \"firebase serve\" \"node server.js\""},"devDependencies":{"concurrently":"^9.2.0","eslint-config-prettier":"^10.1.8"}}

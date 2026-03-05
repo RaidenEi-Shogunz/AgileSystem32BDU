@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hồ Sơ Cá Nhân | Gundam Store</title>
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <script src="/js/auth.js" defer></script>
+  <script src="/js/topbar.js" defer></script>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --success: #16a34a;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    }
+
+    body { background: var(--bg); font-family: 'Segoe UI', system-ui, sans-serif; color: var(--text-main); margin: 0; }
+    
+    .page { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+    .layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
+    
+    @media(max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .page { margin: 20px auto; }
+    }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      box-shadow: var(--shadow); padding: 24px;
+    }
+
+    /* Sidebar */
+    .side { text-align: center; }
+    .avatar-box {
+      width: 80px; height: 80px; background: linear-gradient(135deg, #6366f1, #2563eb);
+      border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center;
+      justify-content: center; color: white; font-size: 32px; font-weight: 800;
+      box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+    }
+    .side .title { margin: 0; font-size: 18px; font-weight: 800; }
+    .side .sub { margin: 8px 0; color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+    
+    .badge {
+      display: inline-block; padding: 6px 12px; border-radius: 8px;
+      background: #f1f5f9; color: var(--text-main); font-size: 12px;
+      font-family: monospace; margin-top: 10px; border: 1px solid var(--border);
+    }
+
+    .menu-nav { margin-top: 24px; text-align: left; }
+    .menu-link {
+      display: flex; align-items: center; gap: 12px; padding: 12px;
+      border-radius: 10px; color: var(--text-muted); text-decoration: none;
+      font-weight: 600; transition: 0.2s; cursor: pointer;
+    }
+    .menu-link:hover { background: #f1f5f9; color: var(--primary); }
+    .menu-link.active { background: #eff6ff; color: var(--primary); }
+
+    /* Main Content */
+    .main h2 { margin: 0 0 8px; font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+    .status-hint { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media(max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .label { font-weight: 700; color: var(--text-main); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .input {
+      padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 12px;
+      font-size: 15px; transition: 0.3s; background: #fff; color: var(--text-main);
+    }
+    .input:disabled { background: #f8fafc; color: #94a3b8; cursor: not-allowed; border-style: dashed; }
+    .input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+
+    .actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); }
+    
+    .btn {
+      border: none; border-radius: 10px; padding: 12px 20px; cursor: pointer;
+      font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--text-main); }
+    .btn-ghost:hover { background: #f1f5f9; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger { background: #fff; color: var(--danger); border: 1.5px solid #fee2e2; width: 100%; justify-content: center; margin-top: 15px; }
+    .btn-danger:hover { background: #fef2f2; }
+
+    /* Toast & Spinner */
+    .toast {
+      position: fixed; top: 24px; right: 24px; z-index: 1000;
+      background: #1e293b; color: #fff; border-radius: 12px; padding: 16px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: translateX(120%); transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .toast.show { transform: translateX(0); }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+
+<body>
+  <div id="topbar-container"></div>
+
+  <main class="page">
+    <div class="layout">
+      <aside class="card side">
+        <div class="avatar-box" id="avatarText">?</div>
+        <h3 class="title" id="sideName">User</h3>
+        <p class="sub" id="sideEmail">email@example.com</p>
+        <div class="badge" id="userBadgeID">ID: ...</div>
+
+        <nav class="menu-nav">
+          <a class="menu-link active"><i class="fa-solid fa-circle-user"></i> Thông tin tài khoản</a>
+          <a href="/track-order.html" class="menu-link"><i class="fa-solid fa-box-open"></i> Đơn hàng của tôi</a>
+          <a class="menu-link"><i class="fa-solid fa-shield-halved"></i> Bảo mật</a>
+        </nav>
+
+        <button class="btn btn-danger" id="logout-btn" type="button">
+          <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+        </button>
+      </aside>
+
+      <section class="card main">
+        <h2><i class="fa-solid fa-address-card" style="color:var(--primary)"></i> Hồ Sơ Cá Nhân</h2>
+        <p class="status-hint" id="statusText">Đang kết nối dữ liệu...</p>
+
+        <form id="profile-form">
+          <div class="grid">
+            <div class="field">
+              <div class="label">Tên đăng nhập</div>
+              <input class="input" type="text" name="username" disabled />
+            </div>
+
+            <div class="field">
+              <div class="label">Email liên kết</div>
+              <input class="input" type="email" name="email" disabled />
+            </div>
+
+            <div class="field">
+              <div class="label">Số điện thoại</div>
+              <input class="input" type="tel" name="phone" disabled placeholder="Chưa cập nhật" />
+            </div>
+
+            <div class="field">
+              <div class="label">Địa chỉ nhận hàng</div>
+              <input class="input" type="text" name="address" disabled placeholder="Địa chỉ giao hàng mặc định" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-ghost" type="button" id="edit-btn">
+              <i class="fa-regular fa-pen-to-square"></i> Chỉnh sửa hồ sơ
+            </button>
+
+            <button class="btn btn-ghost" type="button" id="cancel-btn" style="display:none;">Hủy</button>
+            
+            <button class="btn btn-success" type="submit" id="save-btn" style="display:none;">
+              <span class="spinner" id="saveSpin" style="display:none;"></span>
+              <span id="saveText">Lưu thay đổi</span>
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">
+    <div style="font-weight: 800; margin-bottom: 4px;" id="toastTitle">Thông báo</div>
+    <div style="font-size: 13px; opacity: 0.9;" id="toastDesc">Nội dung...</div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js" defer></script>
+  <script src="/js/firebase-init.js" defer></script>
+
+  <script>
+    (function () {
+      "use strict";
+      const $ = (s) => document.querySelector(s);
+
+      // UI Helpers
+      function showToast(title, desc) {
+        const t = $("#toast");
+        $("#toastTitle").textContent = title;
+        $("#toastDesc").textContent = desc;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 3000);
+      }
+
+      function toggleEditing(formEls, editing) {
+        const { phone, address } = formEls;
+        [phone, address].forEach(i => i.disabled = !editing);
+        $("#edit-btn").style.display = editing ? "none" : "inline-flex";
+        $("#save-btn").style.display = editing ? "inline-flex" : "none";
+        $("#cancel-btn").style.display = editing ? "inline-flex" : "none";
+      }
+
+      async function main() {
+        // 1. Lấy thông tin từ LocalStorage
+        const user = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+        if (!user) return;
+
+        const db = window.db || (window.firebase && firebase.firestore());
+        if (!db) return;
+
+        const form = $("#profile-form");
+        const { username, email, phone, address } = form.elements;
+
+        // 2. Hiển thị UI ban đầu
+        username.value = user.username || "";
+        email.value = user.email || "";
+        $("#sideName").textContent = user.username;
+        $("#sideEmail").textContent = user.email;
+        $("#avatarText").textContent = user.username.charAt(0).toUpperCase();
+        $("#userBadgeID").textContent = `ID: ${user.userId.substring(0, 8)}...`;
+
+        const userDocRef = db.collection("accounts").doc(String(user.userId));
+        let userData = {};
+
+        // 3. Load dữ liệu thực tế từ Firestore
+        try {
+          const docSnap = await userDocRef.get();
+          if (docSnap.exists) {
+            userData = docSnap.data();
+            phone.value = userData.phone || "";
+            address.value = userData.address || "";
+            $("#statusText").textContent = "Thông tin tài khoản của bạn được bảo mật.";
+          }
+        } catch (err) {
+          $("#statusText").textContent = "Lỗi kết nối server.";
+        }
+
+        // 4. Sự kiện nút bấm
+        $("#edit-btn").onclick = () => {
+          toggleEditing({ phone, address }, true);
+          phone.focus();
+        };
+
+        $("#cancel-btn").onclick = () => {
+          phone.value = userData.phone || "";
+          address.value = userData.address || "";
+          toggleEditing({ phone, address }, false);
+        };
+
+        $("#logout-btn").onclick = () => {
+          if(confirm("Bạn muốn đăng xuất?")) {
+            localStorage.clear();
+            window.location.href = "/login.html";
+          }
+        };
+
+        // 5. Lưu dữ liệu
+        form.onsubmit = async (e) => {
+          e.preventDefault();
+          const pVal = phone.value.trim();
+          const aVal = address.value.trim();
+
+          $("#saveSpin").style.display = "inline-block";
+          $("#saveText").textContent = "Đang xử lý...";
+
+          try {
+            await userDocRef.set({ phone: pVal, address: aVal }, { merge: true });
+            userData.phone = pVal;
+            userData.address = aVal;
+            showToast("Thành công", "Thông tin đã được cập nhật.");
+            toggleEditing({ phone, address }, false);
+          } catch (err) {
+            showToast("Lỗi", "Không thể lưu dữ liệu.");
+          } finally {
+            $("#saveSpin").style.display = "none";
+            $("#saveText").textContent = "Lưu thay đổi";
+          }
+        };
+      }
+
+      document.addEventListener("DOMContentLoaded", main);
+    })();
+  </script>
+</body>
+</html>

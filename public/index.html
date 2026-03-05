@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Gundam Store - Shop Mô Hình Chính Hãng & Dụng Cụ</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Chuyên cung cấp mô hình Gundam (HG, RG, MG, PG), Figure, Nendoroid và dụng cụ làm mô hình chính hãng, giá tốt." />
+  <meta name="keywords" content="gundam, mô hình, gunpla, bandai, figure, nendoroid, shop gundam" />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0b1220" />
+
+  <!-- Canonical (nếu có domain thật, thay / bằng URL tuyệt đối) -->
+  <link rel="canonical" href="/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="vi_VN" />
+  <meta property="og:site_name" content="Gundam Store" />
+  <meta property="og:title" content="Gundam Store - Thế giới mô hình" />
+  <meta property="og:description" content="Gundam chính hãng, giá tốt, giao nhanh. HG/RG/MG/PG, Figure, Nendoroid, Dụng cụ." />
+  <meta property="og:image" content="/images/banner-share.jpg" />
+  <meta property="og:image:alt" content="Gundam Store - Banner chia sẻ" />
+
+  <!-- Twitter Card (bonus) -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Gundam Store - Shop Mô Hình Chính Hãng & Dụng Cụ" />
+  <meta name="twitter:description" content="Gundam chính hãng, giá tốt, giao nhanh. HG/RG/MG/PG, Figure, Nendoroid, Dụng cụ." />
+  <meta name="twitter:image" content="/images/banner-share.jpg" />
+
+  <!-- Performance -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+  <link rel="dns-prefetch" href="https://www.gstatic.com" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "Gundam Store",
+    "description": "Shop mô hình Gundam/figure/nendoroid và dụng cụ chính hãng",
+    "telephone": "0949189828",
+    "email": "nduy0021@gmail.com",
+    "image": ["/images/banner-share.jpg"],
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 Đường ABC",
+      "addressLocality": "Cà Mau",
+      "addressCountry": "VN"
+    }
+  }
+  </script>
+
+  <!-- Page micro styles (tăng UX + a11y, không đụng CSS chính của bạn) -->
+  <style>
+    .skip-link{
+      position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden;
+      background:#0b1220;color:#fff;padding:10px 12px;border-radius:12px;z-index:99999
+    }
+    .skip-link:focus{left:14px;top:14px;width:auto;height:auto;outline:3px solid rgba(255,255,255,.6)}
+    .scroll-progress{position:fixed;left:0;top:0;height:3px;width:0;background:#22c55e;z-index:9999}
+    .back-to-top{position:fixed;right:14px;bottom:14px;z-index:9999}
+    .toast[hidden]{display:none !important}
+    .modal[hidden]{display:none !important}
+  </style>
+</head>
+
+<body>
+  <!-- Skip link -->
+  <a class="skip-link" href="#main">Bỏ qua điều hướng</a>
+
+  <!-- Scroll progress -->
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- Header / Nav -->
+  <header id="topbar-container"></header>
+  <nav id="lowerbar-container" aria-label="Điều hướng"></nav>
+
+  <!-- Main -->
+  <main id="main" class="page" role="main">
+    <div class="main-container">
+
+      <!-- Sidebar -->
+      <aside class="sidebar" aria-label="Danh mục sản phẩm">
+        <div class="sidebar-title">
+          <i class="fas fa-bars" aria-hidden="true"></i> DANH MỤC SẢN PHẨM
+        </div>
+
+        <ul class="sidebar-menu" role="list">
+          <li>
+            <a href="javascript:void(0)" onclick="goToCategory('Gundam')" aria-label="Mô hình Gundam">
+              <span><i class="fas fa-robot" aria-hidden="true"></i> Mô hình Gundam</span>
+              <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="goToCategory('30ML')" aria-label="30 Minutes Labels">
+              <span><i class="fas fa-cubes" aria-hidden="true"></i> 30ML - 30 Minutes Labels</span>
+              <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="goToCategory('Kotobukiya')" aria-label="Kotobukiya">
+              <span><i class="fas fa-dragon" aria-hidden="true"></i> Kotobukiya</span>
+              <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="goToCategory('Mecha')" aria-label="Mecha khác">
+              <span><i class="fas fa-rocket" aria-hidden="true"></i> Mecha Khác</span>
+              <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="goToCategory('Figure')" aria-label="Figure">
+              <span><i class="fas fa-female" aria-hidden="true"></i> Figure</span>
+              <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="goToCategory('Nendoroid')" aria-label="Nendoroid">
+              <span><i class="fas fa-cat" aria-hidden="true"></i> Nendoroid</span>
+              <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onclick="goToCategory('Tool')" aria-label="Dụng cụ và sơn">
+              <span><i class="fas fa-wrench" aria-hidden="true"></i> Dụng cụ &amp; Sơn</span>
+              <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Content -->
+      <section class="content" aria-label="Nội dung trang chủ">
+        <!-- Grade bar -->
+        <section class="category-bar" aria-label="Lọc theo Grade">
+          <button class="category-item" type="button" onclick="goToGrade('HG')" aria-label="High Grade">
+            <img src="/images/icons/grade/HG.png" alt="HG" loading="lazy" decoding="async" />
+            <p>High Grade</p>
+          </button>
+
+          <button class="category-item" type="button" onclick="goToGrade('RG')" aria-label="Real Grade">
+            <img src="/images/icons/grade/rg.png" alt="RG" loading="lazy" decoding="async" />
+            <p>Real Grade</p>
+          </button>
+
+          <button class="category-item" type="button" onclick="goToGrade('MG')" aria-label="Master Grade">
+            <img src="/images/icons/grade/mg.png" alt="MG" loading="lazy" decoding="async" />
+            <p>Master Grade</p>
+          </button>
+
+          <button class="category-item" type="button" onclick="goToGrade('PG')" aria-label="Perfect Grade">
+            <img src="/images/icons/grade/pg.png" alt="PG" loading="lazy" decoding="async" />
+            <p>Perfect Grade</p>
+          </button>
+
+          <button class="category-item" type="button" onclick="goToGrade('SD')" aria-label="SD Grade">
+            <img src="/images/icons/grade/sd.png" alt="SD" loading="lazy" decoding="async" />
+            <p>SD Grade</p>
+          </button>
+        </section>
+
+        <!-- Banner -->
+        <section class="banner-container" id="banner-container" aria-label="Banner">
+          <div class="skeleton-box" style="width:100%;height:100%;"></div>
+          <noscript>
+            <div style="padding:12px;border:1px solid #eee;border-radius:12px;background:#fff;margin-top:10px">
+              Vui lòng bật JavaScript để xem banner và danh sách sản phẩm.
+            </div>
+          </noscript>
+        </section>
+      </section>
+    </div>
+
+    <!-- Products -->
+    <div class="container-fluid" id="products">
+      <!-- New products -->
+      <section class="product-section" aria-labelledby="new-title">
+        <div class="section-header-row">
+          <h2 class="product-section-title" id="new-title">
+            <span class="icon-wrapper new"><i class="fas fa-star" aria-hidden="true"></i></span>
+            Sản phẩm mới nhất
+          </h2>
+          <a href="javascript:void(0)" class="see-more-link" onclick="seeMore('new')" aria-label="Xem tất cả sản phẩm mới">
+            Xem tất cả <i class="fas fa-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+
+        <div class="product-list" id="new-product-list" aria-live="polite" aria-busy="true">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+
+        <div class="empty-state" id="new-empty" hidden>
+          <i class="fa-regular fa-face-frown" aria-hidden="true"></i>
+          <p>Chưa có sản phẩm mới để hiển thị.</p>
+        </div>
+      </section>
+
+      <!-- Hot products -->
+      <section class="product-section" aria-labelledby="hot-title">
+        <div class="section-header-row">
+          <h2 class="product-section-title" id="hot-title">
+            <span class="icon-wrapper hot"><i class="fas fa-fire" aria-hidden="true"></i></span>
+            Sản phẩm HOT
+          </h2>
+          <a href="javascript:void(0)" class="see-more-link" onclick="seeMore('hot')" aria-label="Xem tất cả sản phẩm hot">
+            Xem tất cả <i class="fas fa-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+
+        <div class="product-list" id="hot-product-list" aria-live="polite" aria-busy="true">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+
+        <div class="empty-state" id="hot-empty" hidden>
+          <i class="fa-regular fa-face-frown" aria-hidden="true"></i>
+          <p>Chưa có sản phẩm HOT để hiển thị.</p>
+        </div>
+      </section>
+
+      <!-- News & Reviews -->
+      <section class="info-grid-section" aria-label="Tin tức và Review">
+        <article class="news-section" aria-label="Tin tức mới">
+          <div class="section-header">
+            <h3><i class="far fa-newspaper" aria-hidden="true"></i> TIN TỨC MỚI</h3>
+          </div>
+          <div class="news-list" id="news-container" aria-live="polite" aria-busy="true">
+            <p class="muted-loading">Đang cập nhật tin tức...</p>
+          </div>
+        </article>
+
+        <article class="review-section" aria-label="Review sản phẩm">
+          <div class="section-header">
+            <h3><i class="fas fa-glasses" aria-hidden="true"></i> REVIEW SẢN PHẨM</h3>
+          </div>
+          <div class="review-list" id="review-container" aria-live="polite" aria-busy="true">
+            <p class="muted-loading">Đang tải đánh giá...</p>
+          </div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <!-- Floating contact -->
+  <div class="floating-contact" aria-label="Liên hệ nhanh">
+    <a href="tel:0949189828" class="contact-box phone" title="Gọi ngay" aria-label="Gọi 0949 189 828">
+      <i class="fas fa-phone-alt" aria-hidden="true"></i>
+      <span class="contact-info">0949 189 828</span>
+    </a>
+    <a href="mailto:nduy0021@gmail.com" class="contact-box email" title="Gửi Email" aria-label="Gửi email">
+      <i class="fas fa-envelope" aria-hidden="true"></i>
+      <span class="contact-info">nduy0021@gmail.com</span>
+    </a>
+    <div class="contact-box address" title="Địa chỉ shop" aria-label="Địa chỉ shop">
+      <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+      <span class="contact-info">123 Đường ABC, Cà Mau</span>
+    </div>
+  </div>
+
+  <!-- Back to top -->
+  <button class="back-to-top" id="backToTop" type="button" aria-label="Lên đầu trang" hidden>
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true" hidden>
+    <div class="toast__icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+    <div class="toast__content">
+      <div class="toast__title" id="toastTitle">Thông báo</div>
+      <div class="toast__desc" id="toastDesc">Nội dung</div>
+    </div>
+    <button class="toast__close" id="toastClose" type="button" aria-label="Đóng thông báo">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- Quickview modal -->
+  <div class="modal" id="quickModal" role="dialog" aria-modal="true" aria-label="Xem nhanh sản phẩm" hidden>
+    <div class="modal__overlay" data-close="1" tabindex="-1" aria-hidden="true"></div>
+    <div class="modal__card" role="document">
+      <button class="modal__close" type="button" aria-label="Đóng" data-close="1">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <div class="modal__body" id="quickModalBody">
+        <div class="skeleton-box" style="height:240px;width:100%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-column">
+        <h4>Về Gundam Store</h4>
+        <p>Thiên đường mô hình chính hãng tại Cà Mau. Cam kết chất lượng sản phẩm và dịch vụ tốt nhất cho cộng đồng Gunpla.</p>
+      </div>
+      <div class="footer-column">
+        <h4>Hỗ Trợ Khách Hàng</h4>
+        <ul>
+          <li><a href="#">Tra cứu đơn hàng</a></li>
+          <li><a href="#">Chính sách bảo hành</a></li>
+          <li><a href="#">Chính sách đổi trả</a></li>
+          <li><a href="#">Phương thức thanh toán</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Kết Nối</h4>
+        <div class="social-links" aria-label="Mạng xã hội">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+        </div>
+        <p style="margin-top:20px;color:#fff;font-weight:bold;">Hotline: 0949 189 828</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Gundam Store. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts (defer để không block render) -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore-compat.js" defer></script>
+
+  <script src="./js/firebase-init.js" defer></script>
+  <script src="./js/topbar.js" defer></script>
+  <script src="./js/redirect.js" defer></script>
+  <script src="./js/lowerBar.js" defer></script>
+  <script src="./js/truncateText.js" defer></script>
+  <script src="./js/index.js" defer></script>
+
+  <!-- UX helpers (inline minimal, safe) -->
+  <script defer>
+    (function () {
+      const docEl = document.documentElement;
+      const progress = document.getElementById("scrollProgress");
+      const backToTop = document.getElementById("backToTop");
+      const toast = document.getElementById("toast");
+      const toastClose = document.getElementById("toastClose");
+      const modal = document.getElementById("quickModal");
+
+      function onScroll() {
+        const scrollTop = docEl.scrollTop || document.body.scrollTop || 0;
+        const scrollHeight = (docEl.scrollHeight || 0) - (docEl.clientHeight || 0);
+        const p = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+        if (progress) progress.style.width = p + "%";
+        if (backToTop) backToTop.hidden = scrollTop < 500;
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+
+      if (backToTop) {
+        backToTop.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
+      if (toastClose && toast) {
+        toastClose.addEventListener("click", () => (toast.hidden = true));
+      }
+
+      // modal close handler (works with data-close)
+      if (modal) {
+        modal.addEventListener("click", (e) => {
+          const t = e.target;
+          if (t && t.getAttribute && t.getAttribute("data-close") === "1") modal.hidden = true;
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") modal.hidden = true;
+        });
+      }
+
+      // tiny toast helper (optional use in index.js)
+      window.__toast = function (title, desc) {
+        if (!toast) return;
+        const tEl = document.getElementById("toastTitle");
+        const dEl = document.getElementById("toastDesc");
+        if (tEl) tEl.textContent = title || "Thông báo";
+        if (dEl) dEl.textContent = desc || "";
+        toast.hidden = false;
+        clearTimeout(window.__toastT);
+        window.__toastT = setTimeout(() => (toast.hidden = true), 2800);
+      };
+    })();
+  </script>
+</body>
+</html>

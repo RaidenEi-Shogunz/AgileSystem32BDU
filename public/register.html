@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng ký tài khoản | Gundam Store</title>
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" defer></script>
+  <script src="/js/firebase-init.js" defer></script>
+  
+  <script src="/js/topbar.js" defer></script>
+  <script src="/js/lowerBar.js" defer></script>
+
+  <style>
+    :root {
+      --brand: #f4c430;
+      --brand-dark: #d4af37;
+      --text: #111;
+      --muted: #6b7280;
+      --card: #fff;
+      --line: #eee;
+      --bg: #f6f7fb;
+      --shadow: 0 18px 60px rgba(0, 0, 0, .12);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: system-ui, -apple-system, sans-serif;
+      color: var(--text);
+    }
+
+    /* Đảm bảo nội dung không bị dính vào Topbar */
+    #main-register {
+      padding: 40px 12px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 80vh;
+    }
+
+    .wrap {
+      width: min(980px, 100%);
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 24px;
+      align-items: start;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .wrap { grid-template-columns: 1fr; }
+    }
+
+    /* Giữ nguyên style cũ của bạn bên dưới */
+    .hero {
+      background: linear-gradient(135deg, rgba(244, 196, 48, .15), rgba(0, 0, 0, .02));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow);
+    }
+    .hero h1 { margin: 0 0 12px; font-size: 32px; font-weight: 900; }
+    .hero p { margin: 0; color: var(--muted); line-height: 1.6; font-size: 15px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .title { margin: 0 0 20px; font-size: 22px; font-weight: 900; text-align: center; }
+    .field { display: grid; gap: 8px; margin-bottom: 16px; }
+    .label { font-weight: 700; font-size: 14px; color: #374151; }
+    .input {
+      width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px;
+      font-size: 15px; outline: none; transition: all .2s;
+    }
+    .input:focus { border-color: var(--brand); box-shadow: 0 0 0 4px rgba(244, 196, 48, .2); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+
+    .btn {
+      width: 100%; padding: 14px; border: 0; border-radius: 12px; cursor: pointer;
+      font-weight: 900; font-size: 16px; color: #fff;
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+      box-shadow: 0 10px 25px rgba(244, 196, 48, .3);
+    }
+    .btn:disabled { opacity: .6; }
+
+    .foot { margin-top: 15px; text-align: center; color: var(--muted); font-size: 14px; }
+    .foot a { color: var(--text); text-decoration: none; font-weight: 900; }
+
+    /* Modal styles */
+    dialog.app-modal { position: fixed; inset: 0; margin: auto; border: 0; padding: 0; background: transparent; }
+    dialog.app-modal::backdrop { background: rgba(0, 0, 0, .5); }
+    .app-card { width: min(400px, 90vw); border-radius: 20px; background: #fff; padding: 20px; box-shadow: var(--shadow); }
+    .app-actions { display: flex; justify-content: flex-end; margin-top: 20px; }
+    .btn-ok { border: 0; background: var(--brand); color: #fff; padding: 10px 20px; border-radius: 10px; font-weight: 900; cursor: pointer; }
+  </style>
+</head>
+
+<body>
+  <header id="topbar-container"></header>
+  <nav id="lowerbar-container" aria-label="Điều hướng"></nav>
+
+  <main id="main-register">
+    <div class="wrap">
+      <section class="hero">
+        <h1>Gia nhập cộng đồng Gundam</h1>
+        <p>Đăng ký ngay để lưu trữ lịch sử mua hàng, nhận mã giảm giá thành viên và trải nghiệm mua sắm mô hình tối ưu nhất.</p>
+        <div class="hint">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Mật khẩu được mã hóa tự động bằng Firebase Auth.</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="title">Đăng ký tài khoản</h2>
+        <form id="registerForm" autocomplete="on">
+          <div class="field">
+            <label class="label" for="username">Họ và tên</label>
+            <input class="input" type="text" id="username" placeholder="Nguyễn Văn A" required />
+          </div>
+          <div class="field">
+            <label class="label" for="email">Địa chỉ Email</label>
+            <input class="input" type="email" id="email" placeholder="gundam@store.vn" required />
+          </div>
+          <div class="row">
+            <div class="field">
+              <label class="label" for="password">Mật khẩu</label>
+              <input class="input" type="password" id="password" placeholder="••••••••" required />
+            </div>
+            <div class="field">
+              <label class="label" for="confirm">Xác nhận</label>
+              <input class="input" type="password" id="confirm" placeholder="••••••••" required />
+            </div>
+          </div>
+          <button class="btn" id="submitBtn" type="submit">Xác nhận đăng ký</button>
+          <div class="foot">
+            Bạn đã có tài khoản? <a href="login.html">Đăng nhập ngay</a>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="appDialog" class="app-modal">
+    <form method="dialog" class="app-card">
+      <div class="app-head">
+        <h3 id="appDialogTitle" class="app-title">Thông báo</h3>
+      </div>
+      <div class="app-body" id="appDialogMsg">...</div>
+      <div class="app-actions">
+        <button class="btn-ok">Đã hiểu</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    // Logic Firebase và Form của bạn được giữ nguyên ở đây
+    const $ = (s) => document.querySelector(s);
+
+    function showAppDialog(msg, title = "Thông báo") {
+      $("#appDialogTitle").textContent = title;
+      $("#appDialogMsg").textContent = msg;
+      $("#appDialog").showModal();
+    }
+
+    function isStrongPassword(pw) {
+      return typeof pw === "string" && pw.length >= 8 && /\d/.test(pw);
+    }
+
+    function mapAuthError(code) {
+      const m = {
+        "auth/email-already-in-use": "Email này đã được sử dụng bởi tài khoản khác.",
+        "auth/invalid-email": "Địa chỉ email không đúng định dạng.",
+        "auth/weak-password": "Mật khẩu cần mạnh hơn (ít nhất 8 ký tự).",
+        "auth/network-request-failed": "Kết nối mạng thất bại. Vui lòng kiểm tra lại."
+      };
+      return m[code] || "Có lỗi xảy ra trong quá trình đăng ký (" + code + ")";
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const form = $("#registerForm");
+      const btn = $("#submitBtn");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = $("#username").value.trim();
+        const email = $("#email").value.trim().toLowerCase();
+        const password = $("#password").value;
+        const confirm = $("#confirm").value;
+
+        if (password !== confirm) {
+          showAppDialog("Mật khẩu xác nhận không khớp!");
+          return;
+        }
+        if (!isStrongPassword(password)) {
+          showAppDialog("Mật khẩu phải từ 8 ký tự trở lên và chứa ít nhất một chữ số.");
+          return;
+        }
+
+        if (!window.firebase || !firebase.apps.length) {
+          showAppDialog("Lỗi hệ thống: Firebase chưa được khởi tạo.");
+          return;
+        }
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        btn.disabled = true;
+        btn.textContent = "Đang xử lý...";
+
+        try {
+          const cred = await auth.createUserWithEmailAndPassword(email, password);
+          const uid = cred.user.uid;
+
+          await db.collection("accounts").doc(uid).set({
+            username,
+            email,
+            level: 0,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          showAppDialog("Tài khoản đã được tạo thành công!", "Thành công");
+          setTimeout(() => window.location.href = "login.html", 1500);
+
+        } catch (err) {
+          console.error("Registration Error:", err);
+          showAppDialog(mapAuthError(err.code));
+          btn.disabled = false;
+          btn.textContent = "Xác nhận đăng ký";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
