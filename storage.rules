@@ -1,0 +1,48 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    /* =========================
+       Helpers
+    ========================== */
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/accounts/$(request.auth.uid))
+        && (
+          get(/databases/$(database)/documents/accounts/$(request.auth.uid)).data.level == "admin"
+          || get(/databases/$(database)/documents/accounts/$(request.auth.uid)).data.level >= 10
+        );
+    }
+
+    // Chỉ cho ảnh (jpeg/png/webp) và giới hạn kích thước 5MB
+    function isImage() {
+      return request.resource.contentType.matches('image/(jpeg|jpg|png|webp)');
+    }
+
+    function under5MB() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+
+    /* =========================
+       Product images (public read, admin write)
+       Khuyến nghị lưu vào: /products/{filename}
+       hoặc: /products/{productId}/{filename}
+    ========================== */
+
+    match /products/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isImage() && under5MB();
+    }
+
+    /* =========================
+       Default deny (tất cả path khác)
+    ========================== */
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

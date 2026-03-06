@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Tất cả sản phẩm | Gundam Store</title>
+  <meta name="description" content="Xem tất cả sản phẩm Gundam/figure/nendoroid/dụng cụ. Lọc theo danh mục, grade, giá. Sắp xếp theo mới nhất/bán chạy/giá." />
+  <meta name="robots" content="index,follow" />
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Page-only CSS (không phá style.css của bạn) -->
+  <style>
+    .stock-badge{
+    position:absolute;
+    bottom:10px;
+    left:10px;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+    color:#fff;
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
+  }
+  .stock-ok{background:#16a34a}
+  .stock-out{background:#dc2626}
+
+  .product-card.out-of-stock{
+    opacity:.55;
+    filter:grayscale(.6);
+  }
+  .product-card.out-of-stock:hover{
+    transform:none;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+  }
+    .page-wrap{max-width:1200px;margin:0 auto;padding:16px}
+    .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:14px 0 10px}
+    .page-title{margin:0;font-size:28px;line-height:1.2}
+    .page-sub{margin:6px 0 0;color:#7a7a7a;font-size:14px}
+
+    .toolbar{
+      position:sticky;top:0;z-index:20;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:saturate(1.4) blur(10px);
+      border:1px solid #ececec;border-radius:14px;
+      padding:12px; margin:14px 0 16px;
+      box-shadow:0 6px 20px rgba(0,0,0,.06);
+    }
+    .toolbar__row{display:grid;grid-template-columns: 1.2fr .9fr .9fr .9fr .9fr; gap:10px}
+    .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+    .label{font-size:12px;color:#6b7280;display:flex;gap:6px;align-items:center}
+    .input, .select{
+      width:100%; padding:10px 12px;border-radius:10px;
+      border:1px solid #e6e6e6; outline:none; background:#fff;
+      font-size:14px;
+    }
+    .input:focus, .select:focus{border-color:#b9c7ff; box-shadow:0 0 0 4px rgba(99,102,241,.12)}
+    .toolbar__row2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;flex-wrap:wrap}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border:1px dashed #e5e7eb;border-radius:999px;
+      font-size:13px;color:#374151;background:#fff;
+    }
+    .chip button{border:none;background:transparent;cursor:pointer;color:#6b7280}
+    .btn-clear{
+      border:1px solid #e5e7eb;background:#fff;border-radius:10px;
+      padding:10px 12px;cursor:pointer;font-weight:600;
+    }
+    .btn-clear:hover{box-shadow:0 6px 18px rgba(0,0,0,.08)}
+
+    .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+    @media (max-width:1100px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+    @media (max-width:860px){
+      .toolbar__row{grid-template-columns:1fr 1fr}
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .page-title{font-size:22px}
+    }
+    @media (max-width:420px){.grid{grid-template-columns:1fr}}
+
+    /* skeleton cards */
+    .skeleton-card{
+      border-radius:14px;border:1px solid #eee;background:#fff;overflow:hidden;
+      box-shadow:0 6px 18px rgba(0,0,0,.06);
+    }
+    .sk-img{height:170px;background:linear-gradient(90deg,#f2f2f2,#f8f8f8,#f2f2f2);background-size:200% 100%;animation:sk 1.1s infinite}
+    .sk-ln{height:12px;margin:10px 12px;border-radius:999px;background:linear-gradient(90deg,#f2f2f2,#f8f8f8,#f2f2f2);background-size:200% 100%;animation:sk 1.1s infinite}
+    .sk-ln.sm{width:55%}
+    .sk-ln.md{width:80%}
+    .sk-ln.lg{width:90%}
+    @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    .empty{
+      border:1px solid #eee;border-radius:16px;background:#fff;
+      padding:22px;text-align:center;color:#6b7280
+    }
+    .empty i{font-size:26px;margin-bottom:8px}
+
+    .pager{display:flex;justify-content:center;align-items:center;gap:10px;margin:18px 0 8px;flex-wrap:wrap}
+    .pager button{
+      padding:10px 12px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;
+      cursor:pointer;font-weight:700;
+    }
+    .pager button:disabled{opacity:.5;cursor:not-allowed}
+    .pager__info{color:#6b7280;font-size:13px}
+
+    /* Reuse your card class if style.css already has it; these are safe fallbacks */
+    .product-card{
+      border-radius:14px;border:1px solid #eee;background:#fff;overflow:hidden;
+      box-shadow:0 6px 18px rgba(0,0,0,.06);
+      transition:.18s ease; cursor:pointer;
+      display:flex;flex-direction:column;
+    }
+    .product-card:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.10)}
+    .product-image-container{position:relative}
+    .product-image-container img{width:100%;height:170px;object-fit:cover;display:block}
+    .discount-badge{
+      position:absolute;top:10px;left:10px;
+      background:#ef4444;color:#fff;font-weight:800;font-size:12px;
+      padding:6px 8px;border-radius:999px;
+      box-shadow:0 10px 22px rgba(239,68,68,.25);
+    }
+    .quickview-btn{
+      position:absolute;top:10px;right:10px;
+      border:none;border-radius:10px;background:rgba(255,255,255,.92);
+      width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      box-shadow:0 10px 22px rgba(0,0,0,.12);
+    }
+    .product-info{padding:12px}
+    .product-name{margin:0 0 10px;font-size:14px;line-height:1.25;min-height:36px}
+    .product-meta{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .product-price{font-weight:900}
+    .product-rating{white-space:nowrap}
+
+    footer{padding:18px 0;color:#6b7280;text-align:center}
+  </style>
+</head>
+
+<body>
+  <header id="topbar-container"></header>
+
+  <main class="page-wrap" id="main">
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Tất cả sản phẩm</h1>
+        <p class="page-sub">Lọc nhanh theo danh mục/grade/giá — tìm sản phẩm bạn cần trong vài giây.</p>
+      </div>
+      <div class="page-sub" id="resultCount">Đang tải...</div>
+    </div>
+
+    <!-- Toolbar -->
+    <section class="toolbar" aria-label="Bộ lọc sản phẩm">
+      <div class="toolbar__row">
+        <div class="field">
+          <div class="label"><i class="fa-solid fa-magnifying-glass"></i> Tìm theo tên</div>
+          <input class="input" id="q" type="search" placeholder="VD: Unicorn, Barbatos, RX-78..." autocomplete="off" />
+        </div>
+
+        <div class="field">
+          <div class="label"><i class="fa-solid fa-th"></i> Danh mục</div>
+          <select class="select" id="category-filter">
+            <option value="all">Tất cả</option>
+            <option value="Gundam">Mô hình Gundam</option>
+            <option value="30ML">30ML - 30 Minutes Labels</option>
+            <option value="Kotobukiya">Kotobukiya</option>
+            <option value="Mecha">Mecha khác</option>
+            <option value="Figure">Figure</option>
+            <option value="Nendoroid">Nendoroid</option>
+            <option value="Tool">Dụng cụ & Sơn</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label"><i class="fa-solid fa-layer-group"></i> Grade</div>
+          <select class="select" id="grade-filter">
+            <option value="">Tất cả</option>
+            <option value="HG">HG</option>
+            <option value="RG">RG</option>
+            <option value="MG">MG</option>
+            <option value="PG">PG</option>
+            <option value="SD">SD</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label"><i class="fa-solid fa-arrow-up-wide-short"></i> Sắp xếp</div>
+          <select class="select" id="sort">
+            <option value="new">Mới nhất</option>
+            <option value="hot">Bán chạy</option>
+            <option value="price_asc">Giá tăng dần</option>
+            <option value="price_desc">Giá giảm dần</option>
+            <option value="name_asc">Tên A → Z</option>
+            <option value="name_desc">Tên Z → A</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label"><i class="fa-solid fa-coins"></i> Giá tối đa</div>
+          <select class="select" id="priceMax">
+            <option value="">Không giới hạn</option>
+            <option value="200000">≤ 200K</option>
+            <option value="500000">≤ 500K</option>
+            <option value="1000000">≤ 1 triệu</option>
+            <option value="2000000">≤ 2 triệu</option>
+            <option value="5000000">≤ 5 triệu</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toolbar__row2">
+        <div class="chips" id="chips"></div>
+        <button class="btn-clear" type="button" id="clearAll">
+          <i class="fa-solid fa-rotate-left"></i> Xoá bộ lọc
+        </button>
+      </div>
+    </section>
+
+    <!-- Grid -->
+    <section aria-label="Danh sách sản phẩm">
+      <div class="grid" id="product-list">
+        <!-- skeleton -->
+        <div class="skeleton-card"><div class="sk-img"></div><div class="sk-ln lg"></div><div class="sk-ln sm"></div></div>
+        <div class="skeleton-card"><div class="sk-img"></div><div class="sk-ln md"></div><div class="sk-ln sm"></div></div>
+        <div class="skeleton-card"><div class="sk-img"></div><div class="sk-ln lg"></div><div class="sk-ln sm"></div></div>
+        <div class="skeleton-card"><div class="sk-img"></div><div class="sk-ln md"></div><div class="sk-ln sm"></div></div>
+        <div class="skeleton-card"><div class="sk-img"></div><div class="sk-ln lg"></div><div class="sk-ln sm"></div></div>
+      </div>
+
+      <div class="empty" id="emptyState" hidden>
+        <i class="fa-regular fa-face-frown"></i>
+        <div><b>Không tìm thấy sản phẩm phù hợp.</b></div>
+        <div>Thử đổi bộ lọc hoặc xoá bớt điều kiện.</div>
+      </div>
+
+      <div class="pager" id="pager" hidden>
+        <button type="button" id="prevPage"><i class="fa-solid fa-chevron-left"></i> Trước</button>
+        <div class="pager__info" id="pagerInfo">Trang 1/1</div>
+        <button type="button" id="nextPage">Sau <i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Cửa hàng Mobile Suit UNIVERSE</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore-compat.js" defer></script>
+
+  <script src="/js/firebase-init.js" defer></script>
+  <script src="/js/topbar.js" defer></script>
+  <script src="/js/redirect.js" defer></script>
+  <script src="/js/product-list.js" defer></script>
+</body>
+</html>

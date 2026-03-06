@@ -1,0 +1,194 @@
+[
+    {
+        "id": 1,
+        "userId": "2",
+        "rating": 5,
+        "title": "Chiến binh kép đầy uy lực",
+        "content": "Katana kép không chỉ để chiến, mà để chặt đứt mọi lo âu. Astray đỏ là đỉnh cao samurai Gunpla!",
+        "createdAt": "2023-06-12T14:07:01"
+    },
+    {
+        "id": 2,
+        "userId": "2",
+        "rating": 4,
+        "title": "Tự do hơi lỏng tay!",
+        "content": "Strike Freedom – tự do khớp nối, sơn lấp lánh như giấc mơ... dù hơi dễ 'tự do' quá mức ở vài chỗ!",
+        "createdAt": "2022-12-03T17:48:20"
+    },
+    {
+        "id": 3,
+        "userId": "2",
+        "rating": 5,
+        "title": "Huyền thoại khai sinh",
+        "content": "Không có RX-78 là không có Gunpla. Mua em này là bước khởi đầu của mọi huyền thoại.",
+        "createdAt": "2023-01-01T09:00:00"
+    },
+    {
+        "id": 4,
+        "userId": "2",
+        "rating": 5,
+        "title": "Sửa nhiều nhưng chất!",
+        "content": "Exia Repair III – hư càng nhiều, càng đẹp. Lắp xong đúng kiểu: 'Tôi là ánh sáng!'",
+        "createdAt": "2023-04-17T11:11:11"
+    },
+    {
+        "id": 5,
+        "userId": "2",
+        "rating": 4,
+        "title": "Chiến thần deadline",
+        "content": "Barbatos Lupus – vũ khí to, phong cách hung bạo, ráp xong là muốn húc hết mọi deadline!",
+        "createdAt": "2023-03-09T22:35:44"
+    },
+    {
+        "id": 6,
+        "userId": "2",
+        "rating": 5,
+        "title": "Rebuild nhưng nâng tầm",
+        "content": "Aerial Rebuild – build lại nhưng nâng cấp như học kỳ sau, nhìn là muốn replay Witch from Mercury.",
+        "createdAt": "2023-05-27T07:50:33"
+    },
+    {
+        "id": 7,
+        "userId": "2",
+        "rating": 5,
+        "title": "Quốc dân trở lại",
+        "content": "RX-78-2 ver 2.0 – ông tổ comeback. Chi tiết đỉnh, đỏ trắng xanh quốc dân, lắp là mê!",
+        "createdAt": "2022-11-15T10:23:00"
+    },
+    {
+        "id": 8,
+        "userId": "2",
+        "rating": 5,
+        "title": "Thiên thần không gãy cánh",
+        "content": "Wing Zero EW – thiên thần gãy cánh không có trong từ điển. Pose bay là auto MVP kệ trưng bày.",
+        "createdAt": "2023-02-05T16:45:01"
+    },
+    {
+        "id": 9,
+        "userId": "2",
+        "rating": 4,
+        "title": "Boss cuối thiếu phụ kiện",
+        "content": "Sinanju Stein – cool ngầu như boss cuối, chỉ tiếc là phụ kiện ít như lời chúc năm mới từ người cũ.",
+        "createdAt": "2023-06-03T13:03:13"
+    },
+    {
+        "id": 10,
+        "userId": "2",
+        "rating": 5,
+        "title": "Chính nghĩa gấp đôi",
+        "content": "00 Gundam – GN Drive kép, vibe chính nghĩa gấp đôi. Thanh kiếm là điểm cộng đậm chất Setsuna.",
+        "createdAt": "2022-08-09T20:00:00"
+    },
+    {
+        "id": 11,
+        "userId": "2",
+        "rating": 4,
+        "title": "Build không hề hiền",
+        "content": "Baselard – trông hiền mà 'build' không hiền chút nào, cánh mong manh nhưng sức mạnh vô hạn!",
+        "createdAt": "2023-04-14T18:14:14"
+    },
+    {
+        "id": 12,
+        "userId": "2",
+        "rating": 5,
+        "title": "Build xong thành chỉ huy",
+        "content": "Bulkarm Alpha – mô hình chiến đấu chất như quân đội chính quy, build xong muốn gọi mình là chỉ huy!",
+        "createdAt": "2023-05-22T08:30:00"
+    },
+    {
+        "id": 13,
+        "userId": "2",
+        "rating": 4,
+        "title": "Nhẹ nhàng bước vào Gunpla",
+        "content": "Alto trắng – tối giản mà tinh tế, dễ ráp, hợp làm bước đệm thành Gunpla Master.",
+        "createdAt": "2023-03-31T15:00:00"
+    },
+    {
+        "id": 14,
+        "userId": "2",
+        "rating": 4,
+        "title": "Nhỏ mà có võ",
+        "content": "Spinatio Army – nhỏ nhưng có võ, khung xương chắc như lòng tin vào... mùa giảm giá!",
+        "createdAt": "2023-06-16T10:10:10"
+    },
+    {
+        "id": 15,
+        "userId": "2",
+        "rating": 5,
+        "title": "Nhanh và tan chảy",
+        "content": "Agnes Tachyon – tốc độ là tất cả, biểu cảm thì tốc độ tan chảy con tim!",
+        "createdAt": "2023-07-17T14:28:55"
+    },
+    {
+        "id": 16,
+        "userId": "2",
+        "rating": 4,
+        "title": "Đẹp như truyền thuyết",
+        "content": "Aobing – mecha Trung Hoa đẹp như truyền thuyết, build xong là muốn đi học võ thuật luôn.",
+        "createdAt": "2023-02-23T19:09:09"
+    },
+    {
+        "id": 17,
+        "userId": "2",
+        "rating": 5,
+        "title": "GodHand là chân ái",
+        "content": "GodHand – cắt một đường như cắt bỏ mọi nỗi buồn build sai. Sharpness level: thần thánh.",
+        "createdAt": "2023-01-18T12:12:12"
+    },
+    {
+        "id": 18,
+        "userId": "2",
+        "rating": 4,
+        "title": "Trà sữa phiên bản figure",
+        "content": "Satono Diamond – ngọt hơn trà sữa 100% đường, pose nào cũng khiến tim tan chảy.",
+        "createdAt": "2022-10-30T11:30:00"
+    },
+    {
+        "id": 19,
+        "userId": "2",
+        "rating": 5,
+        "title": "Chibi đáng yêu vô cực",
+        "content": "SD RX-78 – chibi siêu cấp đáng yêu, nhìn tưởng để chơi, ai ngờ lại là tâm điểm phòng khách.",
+        "createdAt": "2023-06-21T09:05:00"
+    },
+    {
+        "id": 20,
+        "userId": "2",
+        "rating": 4,
+        "title": "Tam Quốc hóa Gundam",
+        "content": "Cao Cao Wing – Tam Quốc gặp Gundam, nghe là lạ mà build phát nghiện luôn!",
+        "createdAt": "2022-12-19T22:22:22"
+    },
+    {
+        "id": 21,
+        "userId": "2",
+        "rating": 5,
+        "title": "Tượng đài mô hình",
+        "content": "PG RX-78 – không phải mô hình, đây là tượng đài. Build xong là thấy mình đã lên cấp độ tiếp theo.",
+        "createdAt": "2023-07-01T01:01:01"
+    },
+    {
+        "id": 22,
+        "userId": "2",
+        "rating": 5,
+        "title": "Sáng như tương lai",
+        "content": "PG Unicorn – sáng như kỳ vọng, sáng luôn tiền điện nếu bật LED cả đêm!",
+        "createdAt": "2023-03-11T17:45:00"
+    },
+    {
+        "id": 23,
+        "userId": "2",
+        "rating": 5,
+        "title": "Muốn che chở cả đời",
+        "content": "Kitasan Black – đáng yêu như lời chúc ngọt ngào đầu năm, nhìn là thấy muốn bảo vệ suốt đời.",
+        "createdAt": "2023-08-05T20:20:20"
+    },
+    {
+        "id": "24",
+        "userId": "2",
+        "rating": 5,
+        "title": "Mambo, mambo, mambo!",
+        "content": "MAMBO, MAMBO, MAMBO! TONGYUE!",
+        "createdAt": "2023-08-15T12:00:00"
+    }
+]

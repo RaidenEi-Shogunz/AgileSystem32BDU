@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trang Cá Nhân | Gundam Store</title>
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <script src="/js/loginCheck.js" defer></script>
+  <script src="/js/topbar.js" defer></script>
+
+  <style>
+    body{background:#f6f7fb;font-family:Arial,sans-serif}
+    .page{max-width:1100px;margin:0 auto;padding:16px}
+    .layout{display:grid;grid-template-columns:320px 1fr;gap:14px}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}}
+    .card{
+      background:#fff;border:1px solid #eee;border-radius:16px;
+      box-shadow:0 10px 26px rgba(0,0,0,.06);
+      padding:14px;
+    }
+    .side .title{margin:0;font-size:18px}
+    .side .sub{margin:6px 0 0;color:#6b7280;font-size:13px;line-height:1.4}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;margin-top:10px;
+      padding:8px 10px;border-radius:999px;background:#f3f4f6;color:#111827;font-weight:900;font-size:12px
+    }
+    .divider{height:1px;background:#eee;margin:12px 0}
+
+    .main h2{margin:0 0 10px;font-size:20px}
+    .hint{color:#6b7280;font-size:13px;margin:0 0 12px;line-height:1.4}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:720px){.grid{grid-template-columns:1fr}}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .label{font-weight:900;color:#374151;font-size:13px}
+    .input{
+      width:100%;padding:12px;border:1px solid #e5e7eb;border-radius:12px;
+      font-size:14px;outline:none;background:#fff;
+    }
+    .input:disabled{background:#f3f4f6;color:#6b7280}
+    .input:focus{border-color:#b9c7ff;box-shadow:0 0 0 4px rgba(99,102,241,.12)}
+
+    .actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btn{
+      border:none;border-radius:12px;padding:10px 12px;cursor:pointer;font-weight:1000;
+      display:inline-flex;align-items:center;gap:8px;
+    }
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .btn-ghost{background:#fff;border:1px solid #e5e7eb}
+    .btn-primary{background:#2563eb;color:#fff}
+    .btn-success{background:#16a34a;color:#fff}
+    .btn-danger{background:#ef4444;color:#fff}
+
+    .toast{
+      position:fixed;right:14px;bottom:14px;z-index:9999;
+      background:#111827;color:#fff;border-radius:14px;padding:12px 14px;
+      box-shadow:0 18px 60px rgba(0,0,0,.25);
+      max-width:360px;display:none
+    }
+    .toast.show{display:block}
+    .toast .t{font-weight:1000;margin:0 0 4px}
+    .toast .d{margin:0;color:#d1d5db;font-size:13px;line-height:1.35}
+
+    .spinner{
+      width:18px;height:18px;border-radius:999px;border:3px solid rgba(255,255,255,.35);
+      border-top-color:#fff;animation:spin .8s linear infinite
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+
+<body>
+  <div id="topbar-container"></div>
+
+  <main class="page">
+    <div class="layout">
+      <aside class="card side">
+        <h3 class="title">Tài khoản của bạn</h3>
+        <p class="sub">
+          Quản lý email, số điện thoại và địa chỉ nhận hàng. Thông tin này sẽ dùng khi đặt hàng.
+        </p>
+
+        <div class="badge" id="userBadge">👤 Đang tải...</div>
+
+        <div class="divider"></div>
+
+        <button class="btn btn-danger" id="logout-btn" type="button">
+          <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+        </button>
+
+        <p class="sub" style="margin-top:10px">
+          Mẹo: cập nhật đúng số điện thoại + địa chỉ để đặt hàng nhanh hơn.
+        </p>
+      </aside>
+
+      <section class="card main">
+        <h2>Thông Tin Cá Nhân</h2>
+        <p class="hint" id="statusText">Đang tải dữ liệu...</p>
+
+        <form id="profile-form" autocomplete="on">
+          <div class="grid">
+            <div class="field">
+              <div class="label">Tên đăng nhập</div>
+              <input class="input" type="text" name="username" disabled />
+            </div>
+
+            <div class="field">
+              <div class="label">Email</div>
+              <input class="input" type="email" name="email" disabled placeholder="vd: abc@gmail.com" inputmode="email" />
+            </div>
+
+            <div class="field">
+              <div class="label">Số điện thoại</div>
+              <input class="input" type="tel" name="phone" disabled placeholder="0xxxxxxxxx" inputmode="tel" />
+            </div>
+
+            <div class="field">
+              <div class="label">Địa chỉ</div>
+              <input class="input" type="text" name="address" disabled placeholder="Số nhà, đường, phường/xã, quận/huyện..." />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-ghost" type="button" id="edit-btn">
+              <i class="fa-regular fa-pen-to-square"></i> Chỉnh sửa
+            </button>
+
+            <button class="btn btn-success" type="submit" id="save-btn" style="display:none;">
+              <span class="spinner" id="saveSpin" style="display:none;"></span>
+              <span id="saveText">Lưu</span>
+            </button>
+
+            <button class="btn btn-ghost" type="button" id="cancel-btn" style="display:none;">
+              Hủy
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+    <p class="t" id="toastTitle">Thông báo</p>
+    <p class="d" id="toastDesc"></p>
+  </div>
+
+  <!-- Firebase compat (CHỈ 1 VERSION) -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js" defer></script>
+  <script src="/js/firebase-init.js" defer></script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const LS_USER = "loggedInUser";
+      const LS_LOGIN = "loginStatus";
+
+      const $ = (s, r=document) => r.querySelector(s);
+
+      const toast = $("#toast");
+      const toastTitle = $("#toastTitle");
+      const toastDesc = $("#toastDesc");
+      function showToast(title, desc) {
+        if (!toast) return;
+        toastTitle.textContent = title || "Thông báo";
+        toastDesc.textContent = desc || "";
+        toast.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => toast.classList.remove("show"), 2400);
+      }
+
+      function parseJSON(s, fallback) {
+        try { return JSON.parse(s); } catch { return fallback; }
+      }
+
+      function getLoggedUser() {
+        const u = parseJSON(localStorage.getItem(LS_USER) || "null", null);
+        if (!u || u.userId == null) return null;
+        // (optional) đồng bộ trạng thái, tránh bug “lưu user nhưng status khác”
+        if (localStorage.getItem(LS_LOGIN) && localStorage.getItem(LS_LOGIN) !== "logged_in") return null;
+        return u;
+      }
+
+      function getDB() {
+        // ưu tiên window.db từ firebase-init.js
+        const db = window.db || (window.firebase && window.firebase.firestore && window.firebase.firestore());
+        return db || null;
+      }
+
+      function toggleEditing(formEls, editing) {
+        const { email, phone, address } = formEls;
+        [email, phone, address].forEach(i => i.disabled = !editing);
+
+        $("#edit-btn").style.display = editing ? "none" : "inline-flex";
+        $("#save-btn").style.display = editing ? "inline-flex" : "none";
+        $("#cancel-btn").style.display = editing ? "inline-flex" : "none";
+      }
+
+      function setSaving(saving) {
+        const saveBtn = $("#save-btn");
+        const cancelBtn = $("#cancel-btn");
+        const editBtn = $("#edit-btn");
+        const logoutBtn = $("#logout-btn");
+
+        const saveSpin = $("#saveSpin");
+        const saveText = $("#saveText");
+
+        saveBtn.disabled = saving;
+        cancelBtn.disabled = saving;
+        editBtn.disabled = saving;
+        logoutBtn.disabled = saving;
+
+        saveSpin.style.display = saving ? "inline-block" : "none";
+        saveText.textContent = saving ? "Đang lưu..." : "Lưu";
+      }
+
+      function isValidEmail(s) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || "").trim());
+      }
+      function normalizePhoneVN(s) {
+        return String(s || "").replace(/\s+/g, "").trim();
+      }
+      function isValidVNPhone(s) {
+        const v = normalizePhoneVN(s);
+        return /^0\d{9}$/.test(v);
+      }
+
+      function escapeHtml(s){
+        return (s ?? "").toString().replace(/[&<>"']/g, c => ({
+          "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+        }[c]));
+      }
+
+      async function main() {
+        const user = getLoggedUser();
+        if (!user) return; // loginCheck.js sẽ redirect nếu cần
+
+        const db = getDB();
+        if (!db) {
+          alert("Lỗi: Chưa khởi tạo Firebase/Firestore (db).");
+          return;
+        }
+
+        const form = $("#profile-form");
+        const statusText = $("#statusText");
+        const userBadge = $("#userBadge");
+
+        const editBtn = $("#edit-btn");
+        const cancelBtn = $("#cancel-btn");
+        const logoutBtn = $("#logout-btn");
+
+        const { username, email, phone, address } = form.elements;
+
+        // initial
+        username.value = user.username || "";
+        userBadge.innerHTML = `👤 <b>${escapeHtml(user.username || "User")}</b> • ID: ${escapeHtml(String(user.userId))}`;
+
+        const userDocRef = db.collection("accounts").doc(String(user.userId));
+        let userData = {};
+
+        // load firestore
+        try {
+          statusText.textContent = "Đang tải dữ liệu...";
+          const docSnap = await userDocRef.get();
+          userData = docSnap.exists ? (docSnap.data() || {}) : {};
+
+          email.value = userData.email || "";
+          phone.value = userData.phone || "";
+          address.value = userData.address || "";
+
+          statusText.textContent = "Bạn có thể chỉnh sửa thông tin bất cứ lúc nào.";
+        } catch (err) {
+          console.error(err);
+          statusText.textContent = "Không thể tải dữ liệu từ hệ thống.";
+          showToast("Lỗi", "Không tải được thông tin tài khoản.");
+        }
+
+        // default mode
+        toggleEditing({ email, phone, address }, false);
+
+        // logout (clear sạch + optional firebase signout)
+        logoutBtn.onclick = async () => {
+          if (!confirm("Bạn có chắc muốn đăng xuất?")) return;
+
+          try {
+            if (window.firebase && firebase.auth) {
+              // không bắt buộc, nhưng giúp đồng bộ Auth nếu bạn dùng Firebase Auth
+              await firebase.auth().signOut().catch(()=>{});
+            }
+          } finally {
+            localStorage.removeItem(LS_USER);
+            localStorage.setItem(LS_LOGIN, "logged_out");
+            window.location.href = "/login.html";
+          }
+        };
+
+        // edit
+        editBtn.onclick = () => {
+          toggleEditing({ email, phone, address }, true);
+          email.focus();
+          showToast("Chế độ chỉnh sửa", "Bạn có thể cập nhật email / số điện thoại / địa chỉ.");
+        };
+
+        // cancel
+        cancelBtn.onclick = () => {
+          email.value = userData.email || "";
+          phone.value = userData.phone || "";
+          address.value = userData.address || "";
+          toggleEditing({ email, phone, address }, false);
+          showToast("Đã hủy", "Thông tin được khôi phục như trước.");
+        };
+
+        // submit
+        form.onsubmit = async (e) => {
+          e.preventDefault();
+
+          const emailVal = email.value.trim();
+          const phoneVal = normalizePhoneVN(phone.value);
+          const addrVal = address.value.trim();
+
+          if (emailVal && !isValidEmail(emailVal)) {
+            showToast("Email không hợp lệ", "Vui lòng nhập đúng định dạng email.");
+            email.focus(); return;
+          }
+          if (phoneVal && !isValidVNPhone(phoneVal)) {
+            showToast("SĐT không hợp lệ", "Số điện thoại phải 10 số và bắt đầu bằng 0.");
+            phone.focus(); return;
+          }
+
+          // chống spam submit (nếu không đổi gì)
+          const changed =
+            (emailVal !== String(userData.email || "")) ||
+            (phoneVal !== String(userData.phone || "")) ||
+            (addrVal !== String(userData.address || ""));
+
+          if (!changed) {
+            showToast("Không có thay đổi", "Bạn chưa chỉnh sửa thông tin nào.");
+            toggleEditing({ email, phone, address }, false);
+            return;
+          }
+
+          const newData = {
+            ...userData,
+            email: emailVal,
+            phone: phoneVal,
+            address: addrVal,
+            updatedAt: new Date()
+          };
+
+          try {
+            setSaving(true);
+            await userDocRef.set(newData, { merge: true });
+            userData = newData;
+            toggleEditing({ email, phone, address }, false);
+            showToast("Đã lưu", "Thông tin cá nhân đã được cập nhật.");
+          } catch (err) {
+            console.error(err);
+            showToast("Lỗi lưu dữ liệu", err.message || "Không thể lưu.");
+          } finally {
+            setSaving(false);
+          }
+        };
+      }
+
+      document.addEventListener("DOMContentLoaded", main);
+    })();
+  </script>
+</body>
+</html>
