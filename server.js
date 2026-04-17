@@ -1,46 +1,81 @@
+require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
 const admin = require("firebase-admin");
 const path = require("path");
 const cors = require("cors");
 const fs = require("fs");
+const crypto = require("crypto");
 
 // ===============================
-// ⚙️ Firebase Admin
+// ⚙️ Firebase Admin — dùng env var, KHÔNG hardcode key
 // ===============================
-const serviceAccount = require("./serviceAccountKey.json");
+let adminCredential;
+if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+  adminCredential = admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON));
+} else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  adminCredential = admin.credential.applicationDefault();
+} else {
+  const keyPath = path.join(__dirname, "serviceAccountKey.json");
+  if (!fs.existsSync(keyPath)) {
+    throw new Error(
+      "Không tìm thấy service account key.\n" +
+      "Set env FIREBASE_SERVICE_ACCOUNT_JSON hoặc GOOGLE_APPLICATION_CREDENTIALS."
+    );
+  }
+  adminCredential = admin.credential.cert(require(keyPath));
+}
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+admin.initializeApp({ credential: adminCredential });
 
 const db = admin.firestore();
 const FieldValue = admin.firestore.FieldValue;
 const Timestamp = admin.firestore.Timestamp;
 
 // ===============================
+// 🔑 Token HMAC-SHA256
+// ===============================
+const TOKEN_SECRET = process.env.TOKEN_SECRET || (() => {
+  console.warn("⚠️  TOKEN_SECRET chưa được set. Đặt biến này trong .env trước khi deploy!");
+  return "local-dev-secret-" + Math.random();
+})();
+const TOKEN_TTL_MS = 8 * 60 * 60 * 1000; // 8 giờ
+
+function signToken(payload) {
+  const b64 = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const sig = crypto.createHmac("sha256", TOKEN_SECRET).update(b64).digest("base64url");
+  return `${b64}.${sig}`;
+}
+
+function verifyToken(token) {
+  try {
+    const [b64, sig] = (token || "").split(".");
+    if (!b64 || !sig) return null;
+    const expected = crypto.createHmac("sha256", TOKEN_SECRET).update(b64).digest("base64url");
+    if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
+    const payload = JSON.parse(Buffer.from(b64, "base64url").toString());
+    if (payload.exp && Date.now() > payload.exp) return null;
+    return payload;
+  } catch { return null; }
+}
+
+// ===============================
 // 🧩 Helpers
 // ===============================
 function slugify(str) {
   return (str || "")
-    .toString()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // bỏ dấu
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
+    .toString().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 }
 
-// đảm bảo slug unique (nếu trùng thì thêm -2 -3 ...)
 async function ensureUniqueSlug(baseSlug) {
   let slug = baseSlug || "product";
   let i = 1;
-
   while (true) {
     const snap = await db.collection("products").where("slug", "==", slug).limit(1).get();
     if (snap.empty) return slug;
-    i += 1;
-    slug = `${baseSlug}-${i}`;
+    slug = `${baseSlug}-${++i}`;
   }
 }
 
@@ -49,14 +84,37 @@ async function ensureUniqueSlug(baseSlug) {
 // ===============================
 const app = express();
 
-app.use(cors());
-app.use(express.json({ limit: "2mb" }));
+// CORS: chỉ chấp nhận origin được cấu hình qua env
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:5000,http://localhost:3000")
+  .split(",").map((s) => s.trim());
 
-// ✅ Debug: log request để biết chắc đang chạy đúng server.js này
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    cb(new Error(`CORS blocked: ${origin}`));
+  },
+  credentials: true,
+}));
+
+app.use(express.json({ limit: "2mb" }));
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
+
+// ===============================
+// 🔐 Middleware xác thực admin (server-side)
+// ===============================
+function requireAdmin(req, res, next) {
+  const auth = req.headers["authorization"] || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : null;
+  const payload = verifyToken(token);
+  if (!payload) return res.status(401).json({ success: false, message: "Chưa đăng nhập hoặc token hết hạn." });
+  const level = typeof payload.level === "number" ? payload.level : 0;
+  if (level < 1) return res.status(403).json({ success: false, message: "Không có quyền admin." });
+  req.adminUser = payload;
+  next();
+}
 
 // ===============================
 // 🌐 SEO Friendly URLs (PHẢI TRƯỚC static)
@@ -74,54 +132,90 @@ app.get("/track-order", (req, res) => res.sendFile(path.join(__dirname, "public"
 app.use(express.static("public"));
 
 // ===============================
-// 🖼️ Multer upload ảnh sản phẩm
+// 🔐 Login API — xác thực phía server
 // ===============================
+app.post("/api/login", async (req, res) => {
+  const { username, password } = req.body || {};
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: "Thiếu username hoặc password." });
+  }
+  try {
+    const snap = await db.collection("accounts")
+      .where("username", "==", String(username).trim())
+      .limit(1).get();
+
+    // Dùng cùng thông báo dù sai username hay password (tránh user enumeration)
+    if (snap.empty) {
+      return res.status(401).json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu." });
+    }
+
+    const userDoc = snap.docs[0];
+    const userData = userDoc.data();
+
+    // So sánh mật khẩu phía server (không để client truy cập Firestore trực tiếp)
+    // TODO: migrate sang bcrypt: npm i bcrypt → bcrypt.compare(password, userData.passwordHash)
+    if (userData.password !== String(password)) {
+      return res.status(401).json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu." });
+    }
+
+    const level = typeof userData.level === "number" ? userData.level
+      : userData.level === "admin" ? 10 : 0;
+
+    const token = signToken({
+      userId: userDoc.id,
+      username: userData.username,
+      level,
+      exp: Date.now() + TOKEN_TTL_MS,
+    });
+
+    const { password: _pwd, ...safeUser } = userData;
+    res.json({ success: true, token, user: { userId: userDoc.id, ...safeUser } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Lỗi server." });
+  }
+});
+
+// ===============================
+// 🖼️ Multer — whitelist mimetype + giới hạn kích thước
+// ===============================
+const ALLOWED_MIMETYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination(req, file, cb) {
     const dir = path.join(__dirname, "public", "images", "products");
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
-  filename: function (req, file, cb) {
+  filename(req, file, cb) {
     const safeName = (file.originalname || "image")
-      .replace(/\s+/g, "_")
-      .replace(/[^\w.\-]/g, "");
+      .replace(/\s+/g, "_").replace(/[^\w.\-]/g, "");
     cb(null, `${Date.now()}_${safeName}`);
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  fileFilter(req, file, cb) {
+    if (ALLOWED_MIMETYPES.has(file.mimetype)) return cb(null, true);
+    cb(Object.assign(new Error("Chỉ chấp nhận file ảnh (JPEG, PNG, WebP, GIF)."), { code: "INVALID_TYPE" }));
+  },
+});
 
 // ===============================
-// 📦 Upload sản phẩm
+// 📦 Upload — yêu cầu admin
 // ===============================
-app.post("/upload", upload.single("image"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, message: "Không có ảnh được upload." });
-  }
-
+app.post("/upload", requireAdmin, upload.single("image"), async (req, res) => {
+  if (!req.file) return res.status(400).json({ success: false, message: "Không có ảnh được upload." });
   try {
-    const {
-      name,
-      price,
-      discount,
-      grade,
-      brand,
-      releaseDate,
-      category1,
-      category2,
-      sold,
-      slug: slugInput,
-    } = req.body;
-
+    const { name, price, discount, grade, brand, releaseDate, category1, category2, sold, slug: slugInput } = req.body;
     const imageUrl = `/images/products/${req.file.filename}`;
+    const uniqueSlug = await ensureUniqueSlug(slugify(slugInput || name || "product"));
 
-    const baseSlug = slugify(slugInput || name || "product");
-    const uniqueSlug = await ensureUniqueSlug(baseSlug);
-
-    const newProduct = {
+    const ref = await db.collection("products").add({
       name: (name || "").toString(),
-      slug: uniqueSlug, // ✅ thêm slug để dùng /product/:slug
+      slug: uniqueSlug,
       price: Math.max(0, parseInt(price || "0", 10) || 0),
       discount: Math.max(0, Math.min(99, parseInt(discount || "0", 10) || 0)),
       grade: (grade || "").toString(),
@@ -133,238 +227,127 @@ app.post("/upload", upload.single("image"), async (req, res) => {
       image: imageUrl,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
-    };
-
-    const ref = await db.collection("products").add(newProduct);
-
-    res.json({
-      success: true,
-      message: "Tải lên thành công!",
-      id: ref.id,
-      slug: uniqueSlug,
-      imageUrl,
-      productUrl: `/product/${encodeURIComponent(uniqueSlug)}`,
     });
+
+    res.json({ success: true, message: "Tải lên thành công!", id: ref.id, slug: uniqueSlug, imageUrl,
+      productUrl: `/product/${encodeURIComponent(uniqueSlug)}` });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: err.message || "Lỗi server." });
   }
 });
 
-// upload ảnh riêng
-app.post("/upload-image-only", upload.single("image"), (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ success: false, message: "Không có file." });
-    }
-    const imageUrl = `/images/products/${req.file.filename}`;
-    res.json({ success: true, imageUrl });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message || "Lỗi upload ảnh." });
-  }
+app.post("/upload-image-only", requireAdmin, upload.single("image"), (req, res) => {
+  if (!req.file) return res.status(400).json({ success: false, message: "Không có file." });
+  res.json({ success: true, imageUrl: `/images/products/${req.file.filename}` });
 });
 
 // ===============================
 // ✅ ADMIN API (Orders)
 // ===============================
 const STATUS_LABEL = {
-  PLACED: "Đã đặt",
-  CONFIRMED: "Đã xác nhận",
-  PACKING: "Đang đóng gói",
-  SHIPPED: "Đang giao",
-  DELIVERED: "Đã giao",
-  CANCELLED: "Đã huỷ",
-  CANCEL_REQUESTED: "Chờ duyệt huỷ",
-  FAILED: "Giao thất bại",
-  RETURNED: "Hoàn/Trả",
+  PLACED: "Đã đặt", CONFIRMED: "Đã xác nhận", PACKING: "Đang đóng gói",
+  SHIPPED: "Đang giao", DELIVERED: "Đã giao", CANCELLED: "Đã huỷ",
+  CANCEL_REQUESTED: "Chờ duyệt huỷ", FAILED: "Giao thất bại", RETURNED: "Hoàn/Trả",
 };
 
 function normalizeStatus(s) {
   if (!s) return "PLACED";
-  if (s === "pending") return "PLACED"; // legacy
+  if (s === "pending") return "PLACED";
   return String(s).trim();
 }
 
-app.get("/admin/ping", (req, res) => {
-  res.json({ success: true, message: "pong", serverTime: new Date().toISOString() });
-});
-
-// ✅ Helper: push history
 function makeHistoryItem({ status, note, by = "admin" }) {
-  return {
-    status,
-    note: (note || "").toString().slice(0, 200),
-    at: Timestamp.now(),
-    by,
-  };
+  return { status, note: (note || "").toString().slice(0, 200), at: Timestamp.now(), by };
 }
 
-// ✅ Update status: /admin/orders/:id/status
-app.post("/admin/orders/:id/status", async (req, res) => {
+async function syncUserOrder(orderId, userId, status) {
+  if (!userId) return;
+  await db.collection("accounts").doc(String(userId))
+    .collection("orderHistory").doc(orderId)
+    .set({ status, statusLabel: STATUS_LABEL[status], updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+}
+
+app.get("/admin/ping", requireAdmin, (req, res) =>
+  res.json({ success: true, message: "pong", serverTime: new Date().toISOString() }));
+
+app.post("/admin/orders/:id/status", requireAdmin, async (req, res) => {
   try {
     const id = req.params.id;
     const status = normalizeStatus(req.body?.status);
     const note = (req.body?.note || "Admin cập nhật").toString().slice(0, 200);
-
-    if (!STATUS_LABEL[status]) {
-      return res.status(400).json({ success: false, message: "Status không hợp lệ." });
-    }
+    if (!STATUS_LABEL[status]) return res.status(400).json({ success: false, message: "Status không hợp lệ." });
 
     const ref = db.collection("orders").doc(id);
     const doc = await ref.get();
     if (!doc.exists) return res.status(404).json({ success: false, message: "Order không tồn tại." });
-
-    const cur = normalizeStatus(doc.data()?.status);
-    if (cur === "CANCEL_REQUESTED") {
-      return res.status(400).json({
-        success: false,
-        message: "Đơn đang chờ duyệt huỷ, không cho đổi status trực tiếp.",
-      });
+    if (normalizeStatus(doc.data()?.status) === "CANCEL_REQUESTED") {
+      return res.status(400).json({ success: false, message: "Đơn đang chờ duyệt huỷ — dùng /approve-cancel hoặc /reject-cancel." });
     }
 
-    await ref.update({
-      status,
-      statusLabel: STATUS_LABEL[status],
-      updatedAt: FieldValue.serverTimestamp(),
-      history: FieldValue.arrayUnion(makeHistoryItem({ status, note })),
-    });
-
-    // ✅ sync sang orderHistory của user (nếu có userId)
-    const userId = doc.data().userId;
-    if (userId) {
-      const userOrderRef = db
-        .collection("accounts")
-        .doc(String(userId))
-        .collection("orderHistory")
-        .doc(id);
-
-      await userOrderRef.set(
-        {
-          status,
-          statusLabel: STATUS_LABEL[status],
-          updatedAt: FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      );
-    }
-
+    await ref.update({ status, statusLabel: STATUS_LABEL[status], updatedAt: FieldValue.serverTimestamp(),
+      history: FieldValue.arrayUnion(makeHistoryItem({ status, note })) });
+    await syncUserOrder(id, doc.data().userId, status);
     res.json({ success: true, message: "Updated" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message || "Internal Server Error" });
-  }
+  } catch (err) { console.error(err); res.status(500).json({ success: false, message: err.message }); }
 });
 
-// ✅ Approve cancel
-app.post("/admin/orders/:id/approve-cancel", async (req, res) => {
+app.post("/admin/orders/:id/approve-cancel", requireAdmin, async (req, res) => {
   try {
     const id = req.params.id;
     const note = (req.body?.note || "Admin duyệt huỷ").toString().slice(0, 200);
-
     const ref = db.collection("orders").doc(id);
     const doc = await ref.get();
     if (!doc.exists) return res.status(404).json({ success: false, message: "Order không tồn tại." });
-
-    const cur = normalizeStatus(doc.data()?.status);
-    if (cur !== "CANCEL_REQUESTED") {
+    if (normalizeStatus(doc.data()?.status) !== "CANCEL_REQUESTED") {
       return res.status(400).json({ success: false, message: "Đơn không ở trạng thái chờ duyệt huỷ." });
     }
-
-    await ref.update({
-      status: "CANCELLED",
-      statusLabel: STATUS_LABEL.CANCELLED,
+    await ref.update({ status: "CANCELLED", statusLabel: STATUS_LABEL.CANCELLED,
       updatedAt: FieldValue.serverTimestamp(),
-      history: FieldValue.arrayUnion(makeHistoryItem({ status: "CANCELLED", note })),
-    });
-
-    // sync user history
-    const userId = doc.data().userId;
-    if (userId) {
-      const userOrderRef = db
-        .collection("accounts")
-        .doc(String(userId))
-        .collection("orderHistory")
-        .doc(id);
-
-      await userOrderRef.set(
-        {
-          status: "CANCELLED",
-          statusLabel: STATUS_LABEL.CANCELLED,
-          updatedAt: FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      );
-    }
-
+      history: FieldValue.arrayUnion(makeHistoryItem({ status: "CANCELLED", note })) });
+    await syncUserOrder(id, doc.data().userId, "CANCELLED");
     res.json({ success: true, message: "Approved" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message || "Internal Server Error" });
-  }
+  } catch (err) { console.error(err); res.status(500).json({ success: false, message: err.message }); }
 });
 
-// ✅ Reject cancel
-app.post("/admin/orders/:id/reject-cancel", async (req, res) => {
+app.post("/admin/orders/:id/reject-cancel", requireAdmin, async (req, res) => {
   try {
     const id = req.params.id;
     const note = (req.body?.note || "Admin từ chối huỷ").toString().slice(0, 200);
-
     const ref = db.collection("orders").doc(id);
     const doc = await ref.get();
     if (!doc.exists) return res.status(404).json({ success: false, message: "Order không tồn tại." });
-
-    const cur = normalizeStatus(doc.data()?.status);
-    if (cur !== "CANCEL_REQUESTED") {
+    if (normalizeStatus(doc.data()?.status) !== "CANCEL_REQUESTED") {
       return res.status(400).json({ success: false, message: "Đơn không ở trạng thái chờ duyệt huỷ." });
     }
-
-    const backStatus = "CONFIRMED";
-
-    await ref.update({
-      status: backStatus,
-      statusLabel: STATUS_LABEL[backStatus],
+    // Khôi phục đúng trạng thái trước đó (fix bug cũ luôn trả về CONFIRMED)
+    const prevStatus = normalizeStatus(doc.data()?.previousStatus);
+    const backStatus = STATUS_LABEL[prevStatus] ? prevStatus : "CONFIRMED";
+    await ref.update({ status: backStatus, statusLabel: STATUS_LABEL[backStatus],
       updatedAt: FieldValue.serverTimestamp(),
-      history: FieldValue.arrayUnion(makeHistoryItem({ status: backStatus, note })),
-    });
-
-    // sync user history
-    const userId = doc.data().userId;
-    if (userId) {
-      const userOrderRef = db
-        .collection("accounts")
-        .doc(String(userId))
-        .collection("orderHistory")
-        .doc(id);
-
-      await userOrderRef.set(
-        {
-          status: backStatus,
-          statusLabel: STATUS_LABEL[backStatus],
-          updatedAt: FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      );
-    }
-
+      history: FieldValue.arrayUnion(makeHistoryItem({ status: backStatus, note })) });
+    await syncUserOrder(id, doc.data().userId, backStatus);
     res.json({ success: true, message: "Rejected" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message || "Internal Server Error" });
-  }
+  } catch (err) { console.error(err); res.status(500).json({ success: false, message: err.message }); }
 });
 
 // ===============================
-// ✅ Fallback (PHẢI đặt TRƯỚC listen)
+// 🛡️ Error handler
 // ===============================
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+app.use((err, req, res, next) => {
+  if (err.code === "LIMIT_FILE_SIZE") return res.status(400).json({ success: false, message: "File quá lớn. Tối đa 5MB." });
+  if (err.code === "INVALID_TYPE") return res.status(400).json({ success: false, message: err.message });
+  console.error(err);
+  res.status(500).json({ success: false, message: "Lỗi server." });
 });
+
+// ===============================
+// ✅ Fallback
+// ===============================
+app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 
 // ===============================
 // 🚀 Start server
 // ===============================
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`⚡ Server chạy tại http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`⚡ Server chạy tại http://localhost:${PORT}`));
