@@ -11,6 +11,8 @@
   // ===== CONFIG =====
   const API_BASE = "http://localhost:3000";
   const $ = (s) => document.querySelector(s);
+  const getAuthToken = () => localStorage.getItem("authToken") || "";
+  const authHeader = () => ({ "Authorization": `Bearer ${getAuthToken()}` });
   const $$ = (s) => document.querySelectorAll(s);
 
   // ===== STATE =====
@@ -117,7 +119,7 @@
   async function apiPost(path, body) {
     return apiJson(`${API_BASE}${path}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeader() },
       body: JSON.stringify(body || {}),
     });
   }
@@ -368,7 +370,7 @@
       try {
         setStatus("⏳ Đang upload...", true);
 
-        const res = await fetch(`${API_BASE}/upload`, { method: "POST", body: fd });
+        const res = await fetch(`${API_BASE}/upload`, { method: "POST", headers: authHeader(), body: fd });
         const data = await res.json().catch(() => ({}));
 
         if (data?.success) {
