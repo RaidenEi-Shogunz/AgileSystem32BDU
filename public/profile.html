@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Trang Cá Nhân | Gundam Store</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
@@ -13,63 +17,230 @@
   <script src="/js/topbar.js" defer></script>
 
   <style>
-    body{background:#f6f7fb;font-family:Arial,sans-serif}
-    .page{max-width:1100px;margin:0 auto;padding:16px}
-    .layout{display:grid;grid-template-columns:320px 1fr;gap:14px}
-    @media(max-width:900px){.layout{grid-template-columns:1fr}}
-    .card{
-      background:#fff;border:1px solid #eee;border-radius:16px;
-      box-shadow:0 10px 26px rgba(0,0,0,.06);
-      padding:14px;
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #10b981;
+      --success-hover: #059669;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --bg-color: #f3f4f6;
+      --card-bg: #ffffff;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --focus-ring: rgba(37, 99, 235, 0.2);
     }
-    .side .title{margin:0;font-size:18px}
-    .side .sub{margin:6px 0 0;color:#6b7280;font-size:13px;line-height:1.4}
-    .badge{
-      display:inline-flex;align-items:center;gap:8px;margin-top:10px;
-      padding:8px 10px;border-radius:999px;background:#f3f4f6;color:#111827;font-weight:900;font-size:12px
-    }
-    .divider{height:1px;background:#eee;margin:12px 0}
 
-    .main h2{margin:0 0 10px;font-size:20px}
-    .hint{color:#6b7280;font-size:13px;margin:0 0 12px;line-height:1.4}
-
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media(max-width:720px){.grid{grid-template-columns:1fr}}
-    .field{display:flex;flex-direction:column;gap:6px}
-    .label{font-weight:900;color:#374151;font-size:13px}
-    .input{
-      width:100%;padding:12px;border:1px solid #e5e7eb;border-radius:12px;
-      font-size:14px;outline:none;background:#fff;
+    body {
+      background: var(--bg-color);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      color: var(--text-main);
     }
-    .input:disabled{background:#f3f4f6;color:#6b7280}
-    .input:focus{border-color:#b9c7ff;box-shadow:0 0 0 4px rgba(99,102,241,.12)}
 
-    .actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .btn{
-      border:none;border-radius:12px;padding:10px 12px;cursor:pointer;font-weight:1000;
-      display:inline-flex;align-items:center;gap:8px;
+    .page {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+      animation: fadeIn 0.5s ease-out;
     }
-    .btn:disabled{opacity:.55;cursor:not-allowed}
-    .btn-ghost{background:#fff;border:1px solid #e5e7eb}
-    .btn-primary{background:#2563eb;color:#fff}
-    .btn-success{background:#16a34a;color:#fff}
-    .btn-danger{background:#ef4444;color:#fff}
 
-    .toast{
-      position:fixed;right:14px;bottom:14px;z-index:9999;
-      background:#111827;color:#fff;border-radius:14px;padding:12px 14px;
-      box-shadow:0 18px 60px rgba(0,0,0,.25);
-      max-width:360px;display:none
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .toast.show{display:block}
-    .toast .t{font-weight:1000;margin:0 0 4px}
-    .toast .d{margin:0;color:#d1d5db;font-size:13px;line-height:1.35}
 
-    .spinner{
-      width:18px;height:18px;border-radius:999px;border:3px solid rgba(255,255,255,.35);
-      border-top-color:#fff;animation:spin .8s linear infinite
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
     }
-    @keyframes spin{to{transform:rotate(360deg)}}
+
+    @media(max-width: 850px) {
+      .layout { grid-template-columns: 1fr; }
+      .page { margin: 20px auto; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      padding: 24px;
+      transition: box-shadow 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Sidebar Styles */
+    .side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+      padding: 4px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.15);
+    }
+    .avatar-wrapper img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+    }
+
+    .side .title { margin: 0 0 4px; font-size: 20px; font-weight: 700; color: var(--text-main); }
+    .side .sub { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .divider { width: 100%; height: 1px; background: var(--border); margin: 24px 0; }
+
+    /* Main Content Styles */
+    .main h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .main h2 i { color: var(--primary); font-size: 20px; }
+    .hint { color: var(--text-muted); font-size: 14px; margin: 0 0 24px; line-height: 1.5; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media(max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .label { font-weight: 600; color: var(--text-main); font-size: 14px; }
+    
+    .input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-group i {
+      position: absolute;
+      left: 14px;
+      color: #9ca3af;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    .input {
+      width: 100%;
+      padding: 12px 12px 12px 40px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 500;
+      background: #fafafa;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+    .input:disabled { background: var(--bg-color); color: var(--text-muted); cursor: not-allowed; opacity: 0.8; }
+    .input:not(:disabled):focus {
+      border-color: var(--primary);
+      background: #fff;
+      outline: none;
+      box-shadow: 0 0 0 4px var(--focus-ring);
+    }
+    .input:not(:disabled):focus + i, .input-group:focus-within i { color: var(--primary); }
+
+    .actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 32px; }
+    
+    /* Buttons */
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+    .btn:not(:disabled):active { transform: scale(0.97); }
+    
+    .btn-ghost { background: #fff; border: 1px solid var(--border); color: var(--text-main); }
+    .btn-ghost:hover:not(:disabled) { background: #f9fafb; border-color: #d1d5db; }
+    
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3); }
+    
+    .btn-success { background: var(--success); color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+    .btn-success:hover:not(:disabled) { background: var(--success-hover); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3); }
+    
+    .btn-danger { background: #fff; border: 1px solid var(--danger); color: var(--danger); width: 100%; }
+    .btn-danger:hover:not(:disabled) { background: var(--danger); color: #fff; }
+
+    /* Skeleton Loading */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: skeletonLoading 1.5s infinite;
+      border-radius: 8px;
+      color: transparent !important;
+      border-color: transparent !important;
+      pointer-events: none;
+    }
+    .skeleton i { opacity: 0; }
+    .skeleton::placeholder { color: transparent; }
+    @keyframes skeletonLoading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+      background: var(--text-main); color: #fff;
+      border-radius: 16px; padding: 16px 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      max-width: 320px; display: flex; align-items: flex-start; gap: 12px;
+      transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      visibility: hidden;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; visibility: visible; }
+    .toast-icon { font-size: 20px; color: #60a5fa; margin-top: 2px; }
+    .toast-content { flex: 1; }
+    .toast .t { font-weight: 700; margin: 0 0 4px; font-size: 15px; }
+    .toast .d { margin: 0; color: #9ca3af; font-size: 13px; line-height: 1.4; }
+
+    .spinner {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 
@@ -79,63 +250,76 @@
   <main class="page">
     <div class="layout">
       <aside class="card side">
-        <h3 class="title">Tài khoản của bạn</h3>
-        <p class="sub">
-          Quản lý email, số điện thoại và địa chỉ nhận hàng. Thông tin này sẽ dùng khi đặt hàng.
-        </p>
+        <div class="avatar-wrapper skeleton" id="avatarSkeleton">
+          <img id="userAvatar" src="" alt="Avatar" style="opacity: 0; transition: opacity 0.3s;"/>
+        </div>
+        <h3 class="title skeleton" id="userNameDisplay">Đang tải...</h3>
+        <p class="sub skeleton" id="userIdDisplay">Vui lòng chờ giây lát</p>
 
-        <div class="badge" id="userBadge">👤 Đang tải...</div>
+        <div class="badge skeleton" id="userBadge"><i class="fa-solid fa-shield-halved"></i> Member</div>
 
         <div class="divider"></div>
+
+        <p class="sub" style="margin-bottom:16px; text-align: left; font-size: 12px; width: 100%;">
+          <i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> Cập nhật đúng SĐT và địa chỉ để việc giao Gunpla diễn ra nhanh chóng hơn.
+        </p>
 
         <button class="btn btn-danger" id="logout-btn" type="button">
           <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
         </button>
-
-        <p class="sub" style="margin-top:10px">
-          Mẹo: cập nhật đúng số điện thoại + địa chỉ để đặt hàng nhanh hơn.
-        </p>
       </aside>
 
       <section class="card main">
-        <h2>Thông Tin Cá Nhân</h2>
-        <p class="hint" id="statusText">Đang tải dữ liệu...</p>
+        <h2><i class="fa-solid fa-address-card"></i> Thông Tin Cá Nhân</h2>
+        <p class="hint" id="statusText">Quản lý thông tin liên hệ và địa chỉ giao hàng của bạn.</p>
 
         <form id="profile-form" autocomplete="on">
           <div class="grid">
             <div class="field">
               <div class="label">Tên đăng nhập</div>
-              <input class="input" type="text" name="username" disabled />
+              <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                <input class="input skeleton" type="text" name="username" disabled />
+              </div>
             </div>
 
             <div class="field">
-              <div class="label">Email</div>
-              <input class="input" type="email" name="email" disabled placeholder="vd: abc@gmail.com" inputmode="email" />
+              <div class="label">Email liên hệ</div>
+              <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input class="input skeleton" type="email" name="email" disabled placeholder="vd: amuro.ray@gmail.com" inputmode="email" />
+              </div>
             </div>
 
             <div class="field">
               <div class="label">Số điện thoại</div>
-              <input class="input" type="tel" name="phone" disabled placeholder="0xxxxxxxxx" inputmode="tel" />
+              <div class="input-group">
+                <i class="fa-solid fa-phone"></i>
+                <input class="input skeleton" type="tel" name="phone" disabled placeholder="0xxxxxxxxx" inputmode="tel" />
+              </div>
             </div>
 
             <div class="field">
-              <div class="label">Địa chỉ</div>
-              <input class="input" type="text" name="address" disabled placeholder="Số nhà, đường, phường/xã, quận/huyện..." />
+              <div class="label">Địa chỉ nhận hàng</div>
+              <div class="input-group">
+                <i class="fa-solid fa-location-dot"></i>
+                <input class="input skeleton" type="text" name="address" disabled placeholder="Số nhà, đường, phường/xã, quận/huyện..." />
+              </div>
             </div>
           </div>
 
           <div class="actions">
             <button class="btn btn-ghost" type="button" id="edit-btn">
-              <i class="fa-regular fa-pen-to-square"></i> Chỉnh sửa
-            </button>
-
-            <button class="btn btn-success" type="submit" id="save-btn" style="display:none;">
-              <span class="spinner" id="saveSpin" style="display:none;"></span>
-              <span id="saveText">Lưu</span>
+              <i class="fa-regular fa-pen-to-square"></i> Cập nhật thông tin
             </button>
 
             <button class="btn btn-ghost" type="button" id="cancel-btn" style="display:none;">
-              Hủy
+              <i class="fa-solid fa-xmark"></i> Hủy
+            </button>
+            <button class="btn btn-success" type="submit" id="save-btn" style="display:none;">
+              <span class="spinner" id="saveSpin" style="display:none;"></span>
+              <i class="fa-solid fa-check" id="saveIcon"></i>
+              <span id="saveText">Lưu Thay Đổi</span>
             </button>
           </div>
         </form>
@@ -144,11 +328,13 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
-    <p class="t" id="toastTitle">Thông báo</p>
-    <p class="d" id="toastDesc"></p>
+    <i class="fa-solid fa-bell toast-icon" id="toastIcon"></i>
+    <div class="toast-content">
+      <p class="t" id="toastTitle">Thông báo</p>
+      <p class="d" id="toastDesc"></p>
+    </div>
   </div>
 
-  <!-- Firebase compat (CHỈ 1 VERSION) -->
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore-compat.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js" defer></script>
@@ -162,17 +348,27 @@
       const LS_LOGIN = "loginStatus";
 
       const $ = (s, r=document) => r.querySelector(s);
+      const $$ = (s, r=document) => r.querySelectorAll(s);
 
+      // Toast UI
       const toast = $("#toast");
       const toastTitle = $("#toastTitle");
       const toastDesc = $("#toastDesc");
-      function showToast(title, desc) {
+      const toastIcon = $("#toastIcon");
+      
+      function showToast(title, desc, type = 'info') {
         if (!toast) return;
         toastTitle.textContent = title || "Thông báo";
         toastDesc.textContent = desc || "";
+        
+        // Đổi icon theo loại thông báo
+        toastIcon.className = "fa-solid toast-icon " + 
+          (type === 'success' ? "fa-circle-check" : type === 'error' ? "fa-circle-exclamation" : "fa-bell");
+        toastIcon.style.color = type === 'success' ? "#34d399" : type === 'error' ? "#f87171" : "#60a5fa";
+
         toast.classList.add("show");
         clearTimeout(showToast._t);
-        showToast._t = setTimeout(() => toast.classList.remove("show"), 2400);
+        showToast._t = setTimeout(() => toast.classList.remove("show"), 3000);
       }
 
       function parseJSON(s, fallback) {
@@ -182,20 +378,26 @@
       function getLoggedUser() {
         const u = parseJSON(localStorage.getItem(LS_USER) || "null", null);
         if (!u || u.userId == null) return null;
-        // (optional) đồng bộ trạng thái, tránh bug “lưu user nhưng status khác”
         if (localStorage.getItem(LS_LOGIN) && localStorage.getItem(LS_LOGIN) !== "logged_in") return null;
         return u;
       }
 
       function getDB() {
-        // ưu tiên window.db từ firebase-init.js
         const db = window.db || (window.firebase && window.firebase.firestore && window.firebase.firestore());
         return db || null;
       }
 
+      function removeSkeletons() {
+        $$('.skeleton').forEach(el => el.classList.remove('skeleton'));
+      }
+
       function toggleEditing(formEls, editing) {
         const { email, phone, address } = formEls;
-        [email, phone, address].forEach(i => i.disabled = !editing);
+        [email, phone, address].forEach(i => {
+          i.disabled = !editing;
+          // Hiệu ứng focus nhẹ khi bật edit
+          if(editing) i.parentElement.style.opacity = '1';
+        });
 
         $("#edit-btn").style.display = editing ? "none" : "inline-flex";
         $("#save-btn").style.display = editing ? "inline-flex" : "none";
@@ -207,17 +409,15 @@
         const cancelBtn = $("#cancel-btn");
         const editBtn = $("#edit-btn");
         const logoutBtn = $("#logout-btn");
-
         const saveSpin = $("#saveSpin");
+        const saveIcon = $("#saveIcon");
         const saveText = $("#saveText");
 
-        saveBtn.disabled = saving;
-        cancelBtn.disabled = saving;
-        editBtn.disabled = saving;
-        logoutBtn.disabled = saving;
+        [saveBtn, cancelBtn, editBtn, logoutBtn].forEach(b => b.disabled = saving);
 
         saveSpin.style.display = saving ? "inline-block" : "none";
-        saveText.textContent = saving ? "Đang lưu..." : "Lưu";
+        saveIcon.style.display = saving ? "none" : "inline-block";
+        saveText.textContent = saving ? "Đang lưu..." : "Lưu Thay Đổi";
       }
 
       function isValidEmail(s) {
@@ -239,58 +439,55 @@
 
       async function main() {
         const user = getLoggedUser();
-        if (!user) return; // loginCheck.js sẽ redirect nếu cần
+        if (!user) return; // loginCheck.js lo phần này
 
         const db = getDB();
         if (!db) {
-          alert("Lỗi: Chưa khởi tạo Firebase/Firestore (db).");
+          // Delay nhẹ để firebase load xong nếu mạng chậm
+          setTimeout(main, 500); 
           return;
         }
 
         const form = $("#profile-form");
-        const statusText = $("#statusText");
-        const userBadge = $("#userBadge");
-
-        const editBtn = $("#edit-btn");
-        const cancelBtn = $("#cancel-btn");
-        const logoutBtn = $("#logout-btn");
-
         const { username, email, phone, address } = form.elements;
 
-        // initial
-        username.value = user.username || "";
-        userBadge.innerHTML = `👤 <b>${escapeHtml(user.username || "User")}</b> • ID: ${escapeHtml(String(user.userId))}`;
+        // Render UI Avatar & Info
+        const safeName = escapeHtml(user.username || "User");
+        $("#userNameDisplay").textContent = safeName;
+        $("#userIdDisplay").textContent = "ID: " + escapeHtml(String(user.userId));
+        $("#userBadge").innerHTML = `<i class="fa-solid fa-shield-halved"></i> Member`;
+        username.value = safeName;
+        
+        // Auto gen Avatar từ tên
+        const avatarImg = $("#userAvatar");
+        avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(safeName)}&background=2563eb&color=fff&bold=true`;
+        avatarImg.onload = () => avatarImg.style.opacity = 1;
 
         const userDocRef = db.collection("accounts").doc(String(user.userId));
         let userData = {};
 
-        // load firestore
+        // Fetch dữ liệu từ Firestore
         try {
-          statusText.textContent = "Đang tải dữ liệu...";
           const docSnap = await userDocRef.get();
           userData = docSnap.exists ? (docSnap.data() || {}) : {};
 
           email.value = userData.email || "";
           phone.value = userData.phone || "";
           address.value = userData.address || "";
-
-          statusText.textContent = "Bạn có thể chỉnh sửa thông tin bất cứ lúc nào.";
         } catch (err) {
           console.error(err);
-          statusText.textContent = "Không thể tải dữ liệu từ hệ thống.";
-          showToast("Lỗi", "Không tải được thông tin tài khoản.");
+          showToast("Lỗi kết nối", "Không thể lấy dữ liệu mới nhất từ máy chủ.", "error");
+        } finally {
+          removeSkeletons();
         }
 
-        // default mode
         toggleEditing({ email, phone, address }, false);
 
-        // logout (clear sạch + optional firebase signout)
-        logoutBtn.onclick = async () => {
-          if (!confirm("Bạn có chắc muốn đăng xuất?")) return;
-
+        // Đăng xuất
+        $("#logout-btn").onclick = async () => {
+          if (!confirm("Bạn có chắc muốn đăng xuất khỏi hệ thống?")) return;
           try {
             if (window.firebase && firebase.auth) {
-              // không bắt buộc, nhưng giúp đồng bộ Auth nếu bạn dùng Firebase Auth
               await firebase.auth().signOut().catch(()=>{});
             }
           } finally {
@@ -300,23 +497,22 @@
           }
         };
 
-        // edit
-        editBtn.onclick = () => {
+        // Kích hoạt sửa
+        $("#edit-btn").onclick = () => {
           toggleEditing({ email, phone, address }, true);
           email.focus();
-          showToast("Chế độ chỉnh sửa", "Bạn có thể cập nhật email / số điện thoại / địa chỉ.");
         };
 
-        // cancel
-        cancelBtn.onclick = () => {
+        // Hủy sửa
+        $("#cancel-btn").onclick = () => {
           email.value = userData.email || "";
           phone.value = userData.phone || "";
           address.value = userData.address || "";
           toggleEditing({ email, phone, address }, false);
-          showToast("Đã hủy", "Thông tin được khôi phục như trước.");
+          showToast("Đã hủy", "Các thay đổi đã được hoàn tác.");
         };
 
-        // submit
+        // Lưu form
         form.onsubmit = async (e) => {
           e.preventDefault();
 
@@ -324,23 +520,23 @@
           const phoneVal = normalizePhoneVN(phone.value);
           const addrVal = address.value.trim();
 
+          // Validate
           if (emailVal && !isValidEmail(emailVal)) {
-            showToast("Email không hợp lệ", "Vui lòng nhập đúng định dạng email.");
+            showToast("Sai định dạng", "Vui lòng nhập đúng địa chỉ email hợp lệ.", "error");
             email.focus(); return;
           }
           if (phoneVal && !isValidVNPhone(phoneVal)) {
-            showToast("SĐT không hợp lệ", "Số điện thoại phải 10 số và bắt đầu bằng 0.");
+            showToast("Sai định dạng", "Số điện thoại phải có 10 số và bắt đầu bằng số 0.", "error");
             phone.focus(); return;
           }
 
-          // chống spam submit (nếu không đổi gì)
-          const changed =
-            (emailVal !== String(userData.email || "")) ||
-            (phoneVal !== String(userData.phone || "")) ||
-            (addrVal !== String(userData.address || ""));
+          // Check if changed
+          const changed = (emailVal !== String(userData.email || "")) ||
+                          (phoneVal !== String(userData.phone || "")) ||
+                          (addrVal !== String(userData.address || ""));
 
           if (!changed) {
-            showToast("Không có thay đổi", "Bạn chưa chỉnh sửa thông tin nào.");
+            showToast("Không có thay đổi", "Bạn chưa cập nhật thông tin nào.");
             toggleEditing({ email, phone, address }, false);
             return;
           }
@@ -358,10 +554,10 @@
             await userDocRef.set(newData, { merge: true });
             userData = newData;
             toggleEditing({ email, phone, address }, false);
-            showToast("Đã lưu", "Thông tin cá nhân đã được cập nhật.");
+            showToast("Thành công", "Hồ sơ của bạn đã được cập nhật an toàn.", "success");
           } catch (err) {
             console.error(err);
-            showToast("Lỗi lưu dữ liệu", err.message || "Không thể lưu.");
+            showToast("Lỗi", "Quá trình lưu thất bại, vui lòng thử lại.", "error");
           } finally {
             setSaving(false);
           }
