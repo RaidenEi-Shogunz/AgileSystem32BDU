@@ -1,79 +1,89 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    const db = firebase.firestore();
-
-    // Nếu chưa có trạng thái đăng nhập, thì đặt là "logged_out"
+    // Khởi tạo trạng thái mặc định
     if (!localStorage.getItem("loginStatus")) {
         localStorage.setItem("loginStatus", "logged_out");
     }
 
-    // Kiểm tra nếu người dùng đang đăng nhập
     const loginStatus = localStorage.getItem("loginStatus");
     const userData = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+    const currentPath = window.location.pathname;
 
-    // Trang hiện tại
-    const currentPage = window.location.pathname.split("/").pop();
+    // Các path chỉ dành cho admin (level >= 1)
+    const adminPaths = ["/admin", "/admin.html", "/dashboard", "/manage-users"];
+    const isAdminPage = adminPaths.some((p) => currentPath.includes(p));
 
-    // Danh sách các trang chỉ dành cho Admin (level 1)
-    const adminPages = ["admin.html", "dashboard.html", "manage-users.html"]; // sửa theo thực tế
+    // Kiểm tra quyền admin (dựa vào data đã lưu + server sẽ verify lại khi gọi API)
+    if (loginStatus === "logged_in" && isAdminPage) {
+        const level = typeof userData.level === "number"
+            ? userData.level
+            : userData.level === "admin" ? 10 : 0;
 
-    // Nếu đang đăng nhập nhưng user không đủ quyền -> chặn
-    if (loginStatus === "logged_in") {
-        if (userData.level === 0 && adminPages.includes(currentPage)) {
+        if (level < 1) {
             alert("Bạn không có quyền truy cập trang này!");
-            window.location.href = "index.html"; // hoặc trang nào khác dành cho user thường
+            window.location.href = "/";
             return;
         }
     }
 
-    // Nếu chưa đăng nhập và đang cố vào trang không phải login.html
-    if (loginStatus !== "logged_in" && currentPage !== "login.html") {
+    // Chặn trang cần đăng nhập
+    const publicPaths = ["/login", "/login.html", "/register", "/register.html"];
+    const isPublicPage = publicPaths.some((p) => currentPath.includes(p));
+
+    if (loginStatus !== "logged_in" && !isPublicPage) {
         alert("Vui lòng đăng nhập để tiếp tục.");
-        window.location.href = "login.html";
+        window.location.href = "/login.html";
         return;
     }
 
-    // Xử lý đăng nhập
+    // ======= Xử lý form đăng nhập =======
     const loginForm = document.getElementById("login-form");
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
+            const btn = loginForm.querySelector("button[type=submit]");
+            if (btn) { btn.disabled = true; btn.textContent = "Đang đăng nhập..."; }
 
             const username = document.getElementById("username").value.trim();
-            const password = document.getElementById("password").value.trim();
+            const password = document.getElementById("password").value;
 
             try {
-                const snapshot = await db
-                    .collection("accounts")
-                    .where("username", "==", username)
-                    .where("password", "==", password)
-                    .get();
+                // Gọi server API thay vì query Firestore trực tiếp từ client
+                const res = await fetch("/api/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password }),
+                });
 
-                if (snapshot.empty) {
-                    alert("Sai tên đăng nhập hoặc mật khẩu.");
+                const data = await res.json();
+
+                if (!data.success) {
+                    alert(data.message || "Sai tên đăng nhập hoặc mật khẩu.");
                     return;
                 }
 
-                const userDoc = snapshot.docs[0];
-                const userData = { userId: userDoc.id, ...userDoc.data() }; // ✅ gắn userId
-                localStorage.setItem("loggedInUser", JSON.stringify(userData));
-
-                localStorage.setItem("loggedInUser", JSON.stringify(userData));
+                // Lưu token và thông tin user (không lưu password)
+                localStorage.setItem("authToken", data.token);
+                localStorage.setItem("loggedInUser", JSON.stringify(data.user));
                 localStorage.setItem("loginStatus", "logged_in");
-                window.location.href = "index.html";
+                window.location.href = "/";
+
             } catch (error) {
-                console.error("Lỗi đăng nhập Firestore:", error);
+                console.error("Lỗi đăng nhập:", error);
                 alert("Đăng nhập thất bại. Vui lòng thử lại.");
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = "Đăng nhập"; }
             }
         });
     }
 
-    // Xử lý đăng xuất
+    // ======= Xử lý đăng xuất =======
     const logoutBtn = document.getElementById("logout-btn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
             localStorage.removeItem("loggedInUser");
+            localStorage.removeItem("authToken");
             localStorage.setItem("loginStatus", "logged_out");
-            window.location.href = "login.html";
+            window.location.href = "/login.html";
         });
     }
 });
