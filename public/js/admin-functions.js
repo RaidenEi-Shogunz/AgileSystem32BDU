@@ -1,21 +1,10 @@
-/* ==========================
-   admin-functions.js (FULL) — FIXED + STABLE
-   - Products / Orders / Accounts / Tools
-   - ✅ Added Stock column (Tồn kho) in product list + editable
-   - ✅ Accounts save: chặn field undefined
-   - ✅ Orders status: canonical lowercase + normalize legacy UPPERCASE
-   - Orders update status via SERVER API
-========================== */
-
 (() => {
-  // ===== CONFIG =====
   const API_BASE = "http://localhost:3000";
   const $ = (s) => document.querySelector(s);
   const getAuthToken = () => localStorage.getItem("authToken") || "";
   const authHeader = () => ({ "Authorization": `Bearer ${getAuthToken()}` });
   const $$ = (s) => document.querySelectorAll(s);
 
-  // ===== STATE =====
   let editingRow = null;
   let originalRowData = null;
   let editingDocId = null;
@@ -23,14 +12,12 @@
   let allProductsData = [];
   let _productsBound = false;
 
-  // ===== DOM =====
   const productTbody = $("#productTable tbody");
   const accountTbody = $("#accountTable tbody");
   const statusEl = $("#status");
   const toolsStatusEl = $("#toolsStatus");
   const editControls = $("#edit-controls");
 
-  // ===== UTIL =====
   function escapeHtml(s) {
     return (s || "").toString().replace(/[&<>"']/g, (c) => ({
       "&": "&amp;",
@@ -76,7 +63,6 @@
   }
 
   async function ensureDb() {
-    // firebase-init.js nên set window.db = firebase.firestore()
     if (window.db) return window.db;
     if (window.firebase && firebase.apps && firebase.apps.length) {
       window.db = firebase.firestore();
@@ -85,7 +71,6 @@
     throw new Error("Chưa init Firebase/Firestore. Kiểm tra firebase-init.js");
   }
 
-  // ===== MODALS =====
   function showAppDialog(msg, title = "Thông báo") {
     if (typeof window.showAppDialog === "function") return window.showAppDialog(msg, title);
     alert(`${title}\n\n${msg}`);
@@ -96,7 +81,6 @@
     return confirm(msg);
   }
 
-  // ===== API HELPERS =====
   async function apiJson(url, options = {}) {
     const res = await fetch(url, options);
 
@@ -124,7 +108,6 @@
     });
   }
 
-  // ===== CATEGORY / GRADE =====
   function bindCategoryCustom() {
     const c1 = $("#category1");
     const c2 = $("#category2");
@@ -158,7 +141,6 @@
     syncGrade();
   }
 
-  // ===== PRODUCTS =====
   async function fetchProducts() {
     const db = await ensureDb();
     if (!productTbody) return;
@@ -178,8 +160,6 @@
       const release = p.releaseDate?.toDate ? fmtDate(p.releaseDate) : (p.releaseDate || "");
       const stockVal = Number(p.stock ?? 0);
 
-      // Columns:
-      // 0 name, 1 cat1, 2 cat2, 3 price, 4 discount, 5 stock, 6 brand, 7 release, 8 image, 9 sold, 10 actions
       tr.innerHTML = `
         <td>${escapeHtml(p.name)}</td>
         <td>${escapeHtml(p.category1)}</td>
@@ -1085,7 +1065,6 @@ async function restockOrderIfNeeded(orderId, newStatus, prevStatus) {
 
       await fetchProducts();
       await loadAccounts();
-      // Orders load khi bấm tab Orders (admin.html gọi loadOrders() trong showTab)
     } catch (e) {
       console.error(e);
       setStatus("❌ Không kết nối được Firestore. Kiểm tra firebase-init.js", false);
